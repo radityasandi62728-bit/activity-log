@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>web projek</title>
+        <link rel="stylesheet" href="main.css">
+    </head>
+    <body>
+        <header>
+            <h1>judul</h1>
+            <nav>
+                <ul>
+                    <li><a>Home</a></li>
+                    <li><a>About</a></li>
+                    <li><a>Profile</a></li>
+                    <li><a>Celia</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div class="container">
+            <div class="home-container">
+                <div class="profil-main"></div>
+                    <div class="tracker-main">
+                        <div class="input-main">
+                            <div class="accesoris-form"></div>
+                            <div class="input-form">
+                                <div id="history" class="history"></div>
+                                
+                                <div class="input-area">
+                                    <input type="text" id="userInput" placeholder="Ketik sesuatu..." />
+                                    <button onclick="addMessage()">Kirim</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card">
+                            <h3>Activity</h3>
+                            <div id="heatmap" class="heatmap"></div>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="profil-container"></div>
+
+            <div class="about-container"></div>
+
+            <div class="celia-container"></div>
+        </div>
+    </body>
+    <script src="script.js"></script>
+</html>

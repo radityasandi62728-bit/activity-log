@@ -13,10 +13,9 @@ function generateDates(days = 365) {
   const today = new Date();
 
   for (let i = days - 1; i >= 0; i--) {
-    const d = new Date();
+    const d = new Date(today);
     d.setDate(today.getDate() - i);
-
-    dates.push(d.toISOString().slice(0, 10));
+    dates.push(new Date(d)); 
   }
 
   return dates;
@@ -35,22 +34,25 @@ function renderHeatmap() {
   const counts = getCounts();
   const dates = generateDates(365);
 
-  dates.forEach(date => {
+  dates.forEach(dateObj => {
+    const dateStr = dateObj.toISOString().slice(0, 10);
+
     const div = document.createElement("div");
     div.className = "day";
 
-    const count = counts[date] || 0;
+    const count = counts[dateStr] || 0;
     const level = getLevel(count);
 
     if (level) div.classList.add(level);
 
-    div.title = `${date} : ${count} aktivitas`;
+    div.title = `${dateStr} : ${count} aktivitas`;
 
     container.appendChild(div);
   });
 }
 document.addEventListener("DOMContentLoaded", () => {
   renderHeatmap();
+  renderMonths();
 });
 
 addLog();
@@ -93,4 +95,36 @@ function addLog() {
   });
 
   localStorage.setItem("logs", JSON.stringify(logs));
+}
+
+function renderMonths() {
+  const container = document.getElementById("months");
+  container.innerHTML = "";
+
+  const dates = generateDates(365);
+
+  let lastMonth = -1;
+  let weekIndex = 0;
+
+  dates.forEach((date, i) => {
+    const day = date.getDay(); // 0 = Minggu
+    const month = date.getMonth();
+
+    // setiap masuk hari Minggu → kolom baru
+    if (day === 0 && i !== 0) {
+      weekIndex++;
+    }
+
+    // kalau tanggal 1 → tampilkan bulan
+    if (date.getDate() === 1) {
+      const span = document.createElement("span");
+      span.textContent = date.toLocaleString("default", { month: "short" });
+      span.className = "month-label";
+
+      span.style.gridColumnStart = weekIndex + 1;
+
+      container.appendChild(span);
+      lastMonth = month;
+    }
+  });
 }

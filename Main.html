@@ -11,40 +11,59 @@
             <h1>judul</h1>
             <nav>
                 <ul>
-                    <li><a>Home</a></li>
-                    <li><a>About</a></li>
-                    <li><a>Profile</a></li>
-                    <li><a>Celia</a></li>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#profile">Profile</a></li>
+                    <li><a href="#celia">Celia</a></li>
+                    <li><a href="#about">About</a></li>
                 </ul>
             </nav>
         </header>
         <div class="container">
-            <div class="home-container">
-                <div class="profil-main"></div>
-                    <div class="tracker-main">
-                        <div class="input-main">
-                            <div class="accesoris-form"></div>
-                            <div class="input-form">
-                                <div id="history" class="history"></div>
-                                
-                                <div class="input-area">
-                                    <input type="text" id="userInput" placeholder="Ketik sesuatu..." />
-                                    <button onclick="addMessage()">Kirim</button>
+            <main>
+                /*- Home Section -*/
+                <section id="home" class="home-container">
+                    <div class="profil-main"></div>
+                        <div class="tracker-main">
+                            <div class="input-main">
+                                <div class="accesoris-form">
+                                    <div class="form1"></div>
+                                    <div class="form2"></div>
+                                    <div class="form3"></div>
+                                </div>
+                                <div class="input-form">
+                                    <div id="history" class="history"></div>
+                                    
+                                    <div class="input-area">
+                                        <input type="text" id="userInput" placeholder="Ketik sesuatu..." />
+                                        <button onclick="addMessage()">Kirim</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card">
+                                <h3>Activity</h3>
+                                <div class="heatmap-wrapper">
+                                    <div id="months" class="months"></div>
+                                    <div id="heatmap" class="heatmap"></div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <h3>Activity</h3>
-                            <div id="heatmap" class="heatmap"></div>
-                        </div>
-                    </div>
-            </div>
-
-            <div class="profil-container"></div>
-
-            <div class="about-container"></div>
-
-            <div class="celia-container"></div>
+                </section>
+                /*- About Section -*/
+                <section id="about" class="about-container">
+                    <h2>About Section</h2>
+                    <p>This section contains information about the web page.</p>
+                </section>
+                /*- Profile Section -*/
+                <section id="profile">
+                    <h2>Profile Section</h2>
+                    <p>This section contains information about the user's profile.</p>
+                </section>
+                /*- Celia Section -*/
+                <section id="celia">
+                    <h2>Celia Section</h2>
+                    <p>This section contains information about Celia.</p>
+                </section>
+            </main>
         </div>
     </body>
     <script src="script.js"></script>

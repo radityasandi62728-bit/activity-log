@@ -107,15 +107,13 @@ function renderMonths() {
   let weekIndex = 0;
 
   dates.forEach((date, i) => {
-    const day = date.getDay(); // 0 = Minggu
+    const day = date.getDay(); 
     const month = date.getMonth();
 
-    // setiap masuk hari Minggu → kolom baru
     if (day === 0 && i !== 0) {
       weekIndex++;
     }
 
-    // kalau tanggal 1 → tampilkan bulan
     if (date.getDate() === 1) {
       const span = document.createElement("span");
       span.textContent = date.toLocaleString("default", { month: "short" });
@@ -128,3 +126,29 @@ function renderMonths() {
     }
   });
 }
+//day-clock
+function updateClock() {
+  const now = new Date();
+  let hour = now.getHours();
+  let minute = now.getMinutes();
+  let second = now.getSeconds();
+
+  hour = String(hour).padStart(2,"0")
+  minute = String(minute).padStart(2, "0")
+  second = String(second).padStart(2,"0")
+
+  document.getElementById("clock").textContent = `${hour}:${minute}:${second}`
+}
+updateClock();
+setInterval(updateClock, 1000)
+
+function updateDay() {
+  const now = new Date()
+  const days =  [
+    "Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"
+  ]
+  const dayName = days[now.getDay()]
+  document.getElementById("day").textContent = dayName
+}
+setInterval(updateDay, 1000)
+updateDay();

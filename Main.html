@@ -20,8 +20,8 @@
         </header>
         <div class="container">
             <main>
-                <section class="wow"></section>
-                <section id="home" class="home-container">
+                <section class="wow hidden"></section>
+                <section id="home" class="home-container hidden">
                     <div class="profil-main">
                         <div class="profil-picture">
                             <div class="circle"></div>
@@ -64,22 +64,30 @@
                         </div>
                 </section>
               
-                <section id="about" class="about-container">
+                <section id="about" class="about-container hidden">
                     <h2>About Section</h2>
                     <p>This section contains information about the web page.</p>
                 </section>
                
-                <section id="profile">
+                <section id="profile" class="profile-container hidden">
                     <h2>Profile Section</h2>
                     <p>This section contains information about the user's profile.</p>
                 </section>
-                <section id="celia">
+                <section id="celia" class="celia-container hidden">
                     <h2>Celia Section</h2>
                     <p>This section contains information about Celia.</p>
                 </section>
             </main>
         </div>
-        <div class="DailyTask">😊</div>
+        <div class="DailyTask" id="dailytask">😊</div>
+        <div class="DailyForm" id="dailyform">
+            <div class="form-container">
+                <h2>Daily Task</h2>
+                <input type="text" id="taskInput" placeholder="Enter your task here..." />
+                <button onclick="addTask()">Add Task</button>
+                <ul id="taskList"></ul>
+            </div>
+        </div>
     </body>
     <script src="script.js"></script>
 </html>

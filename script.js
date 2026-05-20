@@ -152,3 +152,29 @@ function updateDay() {
 }
 setInterval(updateDay, 1000)
 updateDay();
+
+//menu
+const DailyTask = document.getElementById('dailytask');
+DailyTask.addEventListener('click', () => {
+  if (dailyform.classList.contains('active')) {
+    dailyform.classList.remove('active');
+  } else {
+    dailyform.classList.add('active');
+  }
+})
+//hiddn
+const hiddenElements = document.querySelectorAll('.hidden');
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+
+        if(entry.isIntersecting){
+            entry.target.classList.add('show');
+        } else {
+            entry.target.classList.remove('show');
+        }
+
+    });
+});
+
+hiddenElements.forEach((el) => observer.observe(el));

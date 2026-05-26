@@ -162,6 +162,15 @@ DailyTask.addEventListener('click', () => {
     dailyform.classList.add('active');
   }
 })
+const CeliaChatbot = document.getElementById('celia-chabot');
+CeliaChatbot.addEventListener('click', () => {
+  if (celiaform.classList.contains('active')) {
+    celiaform.classList.remove('active');
+  } else {
+    celiaform.classList.add('active');
+  }
+})
+
 //hiddn
 const hiddenElements = document.querySelectorAll('.hidden');
 

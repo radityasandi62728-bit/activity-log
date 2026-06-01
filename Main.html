@@ -1,101 +1,276 @@
 <!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>web projek</title>
-        <link rel="stylesheet" href="main.css">
-    </head>
-    <body>
-        <header>
-            <h1>judul</h1>
-            <nav>
-                <ul>
-                    <li><a href="#home">Home</a></li>
-                    <li><a href="#profile">Profile</a></li>
-                    <li><a href="#celia">Celia</a></li>
-                    <li><a href="#about">About</a></li>
-                </ul>
-            </nav>
-        </header>
-        <div class="container">
-            <main>
-                <section id="home" class="home-container hidden">
-                    <div class="profil-main">
-                        <div class="profil-picture">
-                            <div class="circle"></div>
-                            <span>Nama Pengguna</span>
-                        </div>
-                        <div class="box-Achievement">Achievement</div>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS // Tracker System</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/pages/main/style.css">
+</head>
+<body>
+    <!-- Scanline overlay -->
+    <div class="scanlines"></div>
+    <div class="noise"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="header-left">
+            <div class="logo-block">
+                <span class="logo-bracket">[</span>
+                <span class="logo-text">NEXUS</span>
+                <span class="logo-bracket">]</span>
+            </div>
+            <div class="header-status">
+                <span class="status-dot"></span>
+                <span class="status-text">SYSTEM ONLINE</span>
+            </div>
+        </div>
+        <nav>
+            <a href="#home" class="nav-link active" data-section="home">HOME</a>
+            <a href="#profile" class="nav-link" data-section="profile">PROFILE</a>
+            <a href="#celia" class="nav-link" data-section="celia">CELIA</a>
+            <a href="#about" class="nav-link" data-section="about">ABOUT</a>
+        </nav>
+        <div class="header-right">
+            <div class="user-tag">
+                <span class="user-id">USR_001</span>
+                <div class="avatar-mini"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <main>
+
+            <!-- HOME SECTION -->
+            <section id="home" class="section home-section active-section">
+
+                <!-- Left: Profile panel -->
+                <aside class="profile-panel">
+                    <div class="panel-header">
                     </div>
-                        <div class="tracker-main">
-                            <div class="input-main">
-                                <div class="accesoris-form">
-                                    <div class="form1">
-                                        <div class="clock" id="clock">00:00:00</div>
-                                        <div class="day-form1" id="day"></div>
-                                    </div>
-                                    <div class="form2">
-                                        <span>Total Hari: <span id="totalDays">0</span></span>
-                                        <span>Total Jam: <span id="totalHours">0</span></span>
-                                        <span>Total Streak: <span id="totalStreak">0</span></span>
-                                        <span>Total Tugas: <span id="totalTasks">0</span></span>
-                                    </div>
-                                    <div class="form3"></div>
-                                </div>
-                                <div class="input-form">
-                                    <div id="history" class="history">
-                                        <h3>History</h3>
-                                    </div>
-                                    <div class="input-area">
-                                        <input type="text" id="userInput" placeholder="Ketik sesuatu..." />
-                                        <button onclick="addMessage()">Kirim</button>
-                                    </div>
-                                </div>
+                    <div class="avatar-wrap">
+                        <div class="avatar-ring">
+                            <div class="avatar-core">
+                                <svg viewBox="0 0 80 80" class="avatar-icon">
+                                    <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
+                                </svg>
                             </div>
-                            <div class="card">
-                                <h3>Activity</h3>
-                                <div class="heatmap-wrapper">
-                                    <div id="months" class="months"></div>
-                                    <div id="heatmap" class="heatmap"></div>
-                                </div>
+                            <div class="avatar-scan"></div>
+                        </div>
+                        <div class="user-name">Nama Pengguna</div>
+                        <div class="user-rank">RANK: ALPHA</div>
+                    </div>
+                    <div class="stats-grid">
+                        <div class="stat-cell">
+                            <div class="stat-value" id="totalDays">0</div>
+                            <div class="stat-label">HARI</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-value" id="totalHours">0</div>
+                            <div class="stat-label">JAM</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-value" id="totalStreak">0</div>
+                            <div class="stat-label">STREAK</div>
+                        </div>
+                        <div class="stat-cell">
+                            <div class="stat-value" id="totalTasks">0</div>
+                            <div class="stat-label">TUGAS</div>
+                        </div>
+                    </div>
+                    <div class="achievement-block">
+                        <div class="ach-title">// ACHIEVEMENTS</div>
+                        <div class="ach-list">
+                            <div class="ach-item locked"><span>⬡</span> First Log</div>
+                            <div class="ach-item locked"><span>⬡</span> 7-Day Streak</div>
+                            <div class="ach-item locked"><span>⬡</span> Task Master</div>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Right: Tracker area -->
+                <div class="tracker-area">
+
+                    <div class="top-row">
+
+                        <div class="widget clock-widget">
+                            <div class="widget-label">SYSTEM TIME</div>
+                            <div class="clock-display" id="clock">00:00:00</div>
+                            <div class="day-display" id="day">SENIN</div>
+                            <div class="date-display" id="dateDisplay"></div>
+                        </div>
+
+                        <div class="widget log-widget">
+                            <div class="widget-label">ACTIVITY LOG</div>
+                            <div id="history" class="log-history">
+                                <div class="log-empty">Belum ada aktivitas tercatat...</div>
+                            </div>
+                            <div class="log-input-row">
+                                <input type="text" id="userInput" placeholder="Ketik aktivitas..." class="cyber-input"/>
+                                <button onclick="addMessage()" class="cyber-btn">KIRIM</button>
                             </div>
                         </div>
-                </section>
-              
-                <section id="about" class="about-container hidden">
-                    <h2>About Section</h2>
-                    <p>This section contains information about the web page.</p>
-                </section>
-               
-                <section id="profile" class="profile-container hidden">
-                    <h2>Profile Section</h2>
-                    <p>This section contains information about the user's profile.</p>
-                </section>
-                <section id="celia" class="celia-container hidden">
-                    <h2>Celia Section</h2>
-                    <p>This section contains information about Celia.</p>
-                </section>
-            </main>
+                    </div>
+
+                    <!-- Heatmap widget -->
+                    <div class="widget heatmap-widget">
+                        <div class="widget-label">// ACTIVITY MATRIX — 365 HARI</div>
+                        <div class="heatmap-wrapper">
+                            <div id="months" class="months"></div>
+                            <div id="heatmap" class="heatmap"></div>
+                        </div>
+                        <div class="heatmap-legend">
+                            <span>LESS</span>
+                            <div class="legend-dot l0"></div>
+                            <div class="legend-dot l1"></div>
+                            <div class="legend-dot l2"></div>
+                            <div class="legend-dot l3"></div>
+                            <div class="legend-dot l4"></div>
+                            <span>MORE</span>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- PROFILE SECTION -->
+            <section id="profile" class="section profile-section">
+                <div class="section-inner">
+                    <div class="section-title">// PROFIL PENGGUNA</div>
+                    <div class="profile-card-full">
+                        <div class="pf-avatar">
+                            <div class="avatar-ring large">
+                                <div class="avatar-core">
+                                    <svg viewBox="0 0 80 80"><circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+                                </div>
+                            </div>
+                            <div class="pf-name">Nama Pengguna</div>
+                            <div class="pf-id">ID: USR_001_ALPHA</div>
+                        </div>
+                        <div class="pf-info">
+                            <div class="pf-row"><span class="pf-key">STATUS</span><span class="pf-val pf-online">● ONLINE</span></div>
+                            <div class="pf-row"><span class="pf-key">BERGABUNG</span><span class="pf-val">2025-01-01</span></div>
+                            <div class="pf-row"><span class="pf-key">LEVEL</span><span class="pf-val">ALPHA-7</span></div>
+                            <div class="pf-row"><span class="pf-key">TOTAL LOG</span><span class="pf-val" id="profileTotalLog">0</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CELIA SECTION -->
+            <section id="celia" class="section celia-section">
+                <div class="section-inner">
+                    <div class="section-title">CELIA — AI ASSISTANT</div>
+                    <div class="celia-full-chat">
+                        <div class="celia-header-banner">
+                            <div class="celia-avatar-lg"></div>
+                            <div>
+                                <div class="celia-name">CELIA</div>
+                                <div class="celia-sub"></div>
+                            </div>
+                            <div class="celia-pulse"></div>
+                        </div>
+                        <div id="celiaChatFull" class="chat-history-full"></div>
+                        <div class="chat-input-row">
+                            <input type="text" id="celiaInputFull" placeholder="Kirim pesan ke CELIA..." class="cyber-input"/>
+                            <button onclick="sendCeliaFull()" class="cyber-btn">SEND</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ABOUT SECTION -->
+            <section id="about" class="section about-section">
+                <div class="section-inner">
+                    <div class="section-title">// TENTANG NEXUS</div>
+                    <div class="about-grid">
+                        <div class="about-card">
+                            <div class="about-icon">⬡</div>
+                            <div class="about-card-title">ACTIVITY TRACKER</div>
+                            <p>Catat setiap aktivitas harianmu dan visualisasikan progres dengan activity heatmap seperti GitHub.</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="about-icon">⬡</div>
+                            <div class="about-card-title">AI ASSISTANT — CELIA</div>
+                            <p>CELIA adalah asisten AI yang siap membantu pertanyaan, motivasi, dan perencanaan harianmu.</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="about-icon">⬡</div>
+                            <div class="about-card-title">DAILY TASK</div>
+                            <p>Kelola tugas harian dengan sistem task manager terintegrasi. Tandai selesai dan lacak produktivitas.</p>
+                        </div>
+                        <div class="about-card">
+                            <div class="about-icon">⬡</div>
+                            <div class="about-card-title">STATISTIK REAL-TIME</div>
+                            <p>Monitor total hari aktif, jam, streak, dan tugas secara real-time langsung dari dashboard.</p>
+                        </div>
+                    </div>
+                    <div class="about-version">NEXUS v2.0.0 — Built with Futuristic Tech Stack</div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Floating: Daily Task button -->
+    <div class="fab" id="dailytask-fab" title="Daily Task">
+        <span>☰</span>
+        <div class="fab-label">TASK</div>
+    </div>
+
+    <!-- Floating: Celia chatbot button -->
+    <div class="fab fab-celia" id="celia-fab" title="CELIA Chatbot">
+        <span>C</span>
+        <div class="fab-label">CELIA</div>
+    </div>
+
+    <!-- Daily Task Modal -->
+    <div class="modal-overlay" id="dailyform-overlay">
+        <div class="modal" id="dailyform">
+            <div class="modal-header">
+                <span class="modal-title">// DAILY TASK</span>
+                <button class="modal-close" id="closeDaily">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="task-input-row">
+                    <input type="text" id="taskInput" placeholder="Tambah tugas baru..." class="cyber-input"/>
+                    <button onclick="addTask()" class="cyber-btn">ADD</button>
+                </div>
+                <ul id="taskList" class="task-list"></ul>
+                <div class="task-footer">
+                    <span id="taskCount">0 tugas</span>
+                    <span id="taskDone">0 selesai</span>
+                </div>
+            </div>
         </div>
-        <div class="celia-chabot" id="celia-chabot">C</div>
-        <div class="celia-form" id="celiaform">
-            <div class="form-container">
-                <h2>Celia Chatbot</h2>
+    </div>
+
+    <!-- Celia Chat Modal -->
+    <div class="modal-overlay" id="celiaform-overlay">
+        <div class="modal" id="celiaform">
+            <div class="modal-header">
+                <div class="celia-modal-title">
+                    <div class="celia-avatar-sm"></div>
+                    <div>
+                        <div class="modal-title">CELIA</div>
+                        <div class="celia-status">● ACTIVE</div>
+                    </div>
+                </div>
+                <button class="modal-close" id="closeCelia">✕</button>
+            </div>
+            <div class="modal-body">
                 <div id="chatHistory" class="chat-history"></div>
-                <input type="text" id="chatInput" placeholder="Type your message here..." />
-                <button onclick="sendMessage()">Send</button>
+                <div class="chat-input-row">
+                    <input type="text" id="chatInput" placeholder="Tanya CELIA..." class="cyber-input"/>
+                    <button onclick="sendMessage()" class="cyber-btn">SEND</button>
+                </div>
             </div>
         </div>
-        <div class="DailyTask" id="dailytask">😊</div>
-        <div class="DailyForm" id="dailyform">
-            <div class="form-container">
-                <h2>Daily Task</h2>
-                <input type="text" id="taskInput" placeholder="Enter your task here..." />
-                <button onclick="addTask()">Add Task</button>
-                <ul id="taskList"></ul>
-            </div>
-        </div>
-    </body>
-    <script src="script.js"></script>
+    </div>
+
+    <script src="/pages/main/hello.js"></script>
+</body>
 </html>

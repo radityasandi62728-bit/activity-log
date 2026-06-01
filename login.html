@@ -1,40 +1,65 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Tracker App</title>
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="login.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyber Nexus — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/pages/login/style.css">
 </head>
 <body>
-    <div class="container">
-        <div class="login-card">
-            <div class="scanlines"></div>
-            
-            <h1 class="cyber-title">PROJECT MATE</h1>
-            
-            <div class="cyber-description">
-                <p>Otentikasi diperlukan untuk mengakses sistem pelacakan.</p>
-                <p>Silakan masukkan kredensial Anda untuk menyinkronkan data, melanjutkan rentetan aktivitas, dan memantau progres harian Anda.</p>
-            </div>
 
-            <form action="Main.html" class="cyber-form">
-                <div class="input-group">
-                    <input type="text" id="username" required autocomplete="off" placeholder=" ">
-                    <label for="username">NAMA PENGGUNA</label>
-                </div>
-                
-                <div class="input-group">
-                    <input type="password" id="password" required placeholder=" ">
-                    <label for="password">KATA SANDI</label>
-                </div>
+<div id="cy-root">
 
-                <button type="submit" class="cyber-button">
-                    <span class="button-text">INISIALISASI LOGIN</span>
-                </button>
-            </form>
-        </div>
+  <div id="left-bg"></div>
+  <div id="right-bg"></div>
+  <div id="divider"></div>
+
+  <div id="door"></div>
+
+  <div id="hint">
+    <div id="hint-title">ACTIVITY<br>TRACKER</div>
+    <div id="hint-sub">TAP CIRCLE TO ACCESS</div>
+  </div>
+
+  <div id="door-info">
+    <span>◈ AWAITING AUTHENTICATION ◈</span>
+  </div>
+
+  <div id="toggle-btn">
+    <div class="c-outer">
+      <div class="c-inner"></div>
     </div>
+  </div>
+
+  <div id="form-overlay">
+    <div class="login-card">
+      <button id="close-form">✕</button>
+      <div class="status-bar">
+        <div class="dot"></div>
+        <div class="dot"></div>
+        <div class="dot"></div>
+      </div>
+      <div class="ltitle">CYBER<br>NEXUS</div>
+      <div class="field">
+        <label>Identifier</label>
+        <input type="text" placeholder="user@nexus.io" />
+      </div>
+      <div class="field">
+        <label>Auth Key</label>
+        <input type="password" placeholder="••••••••••••" />
+      </div>
+      <button class="login-btn" id="auth-btn">
+        <span>LOGIN</span>
+      </button>
+      <div class="lfoot">
+        No access? <a href="#">Request clearance →</a>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script src="/pages/login/script.js"></script>
 </body>
 </html>

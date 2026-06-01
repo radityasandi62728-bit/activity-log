@@ -1,0 +1,565 @@
+/* ============================================================
+   CYBER NEXUS LOGIN — style.css
+   ============================================================ */
+
+/* ─── CSS VARIABLES ─── */
+:root {
+  --bg: #050709;
+  --bg2: #080c12;
+  --panel: rgba(8, 14, 22, 0.92);
+  --panel-border: rgba(0, 220, 255, 0.2);
+  --panel-border-hot: rgba(0, 220, 255, 0.6);
+  --cyan: #00dcff;
+  --cyan-dim: rgba(0, 220, 255, 0.15);
+  --green: #00ff9d;
+  --green-dim: rgba(0, 255, 157, 0.12);
+  --orange: #ff6b35;
+  --purple: #8b5cf6;
+  --text: #c8d8e8;
+  --text-dim: #4a6070;
+  --text-bright: #ffffff;
+  --font-display: 'Orbitron', monospace;
+  --font-mono: 'Share Tech Mono', monospace;
+  --font-body: 'Exo 2', sans-serif;
+  --glow-cyan: 0 0 20px rgba(0, 220, 255, 0.4);
+  --glow-green: 0 0 20px rgba(0, 255, 157, 0.4);
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ─── RESET ─── */
+*, *::before, *::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ─── BODY ─── */
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ─── SCENE ROOT ─── */
+#cy-root {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Grid pattern background */
+#cy-root::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 220, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 220, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ─── LEFT BACKGROUND ─── */
+#left-bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 60%;
+  height: 100%;
+  background: var(--bg);
+  z-index: 1;
+}
+
+/* ─── RIGHT BACKGROUND ─── */
+#right-bg {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 40%;
+  height: 100%;
+  background: var(--bg2);
+  z-index: 1;
+}
+
+#right-bg::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 20%, rgba(0, 220, 255, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 20% 80%, rgba(0, 255, 157, 0.08) 0%, transparent 60%);
+}
+
+/* ─── DIVIDER LINE ─── */
+#divider {
+  position: absolute;
+  left: 60%;
+  top: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(0, 220, 255, 0.3) 30%,
+    rgba(0, 220, 255, 0.3) 70%,
+    transparent
+  );
+  z-index: 3;
+}
+
+/* ─── DOOR (slides to the left on authenticate) ─── */
+#door {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, var(--bg) 0%, var(--bg2) 100%);
+  z-index: 10;
+  transform-origin: left center;
+  transition: transform 1.1s cubic-bezier(0.77, 0, 0.18, 1);
+  will-change: transform;
+}
+
+/* Scanline texture on door */
+#door::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0, 220, 255, 0.015) 3px,
+    rgba(0, 220, 255, 0.015) 4px
+  );
+  pointer-events: none;
+}
+
+/* Glowing edge on right side of door */
+#door::before {
+  content: '';
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 2px;
+  height: 100%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    var(--cyan) 40%,
+    var(--cyan) 60%,
+    transparent
+  );
+  opacity: 0.4;
+}
+
+/* Door open state */
+#door.open {
+  transform: translateX(-101%);
+}
+
+/* ─── HINT — title text on left side ─── */
+#hint {
+  position: absolute;
+  left: 30%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  text-align: center;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+#hint.hidden {
+  opacity: 0;
+}
+
+#hint-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+#hint-title {
+  font-family: var(--font-display);
+  font-size: 36px;
+  font-weight: 900;
+  color: var(--text-bright);
+  letter-spacing: 4px;
+  line-height: 1.15;
+  margin-bottom: 14px;
+  text-shadow: 0 0 30px rgba(0, 220, 255, 0.3);
+}
+
+#hint-sub {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--cyan);
+  letter-spacing: 3px;
+  text-shadow: var(--glow-cyan);
+}
+
+/* ─── BLINKING STATUS TEXT (bottom center) ─── */
+#door-info {
+  position: absolute;
+  left: 50%;
+  bottom: 32px;
+  transform: translateX(-50%);
+  z-index: 11;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+#door-info.hidden {
+  opacity: 0;
+}
+
+#door-info span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  animation: blink 2.5s ease-in-out infinite;
+}
+
+/* ─── CIRCLE TOGGLE BUTTON ─── */
+#toggle-btn {
+  position: absolute;
+  left: calc(60% - 44px);
+  top: 50%;
+  transform: translateY(-50%);
+  width: 88px;
+  height: 88px;
+  z-index: 20;
+  cursor: pointer;
+  transition: left 1.1s cubic-bezier(0.77, 0, 0.18, 1);
+}
+
+#toggle-btn.open {
+  left: calc(100% - 108px);
+}
+
+/* Outer ring */
+.c-outer {
+  width: 88px;
+  height: 88px;
+  border-radius: 50%;
+  background: var(--bg2);
+  border: 2px solid var(--cyan);
+  box-shadow:
+    0 0 18px rgba(0, 220, 255, 0.5),
+    inset 0 0 12px rgba(0, 220, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  animation: spin 4s linear infinite;
+}
+
+#toggle-btn.open .c-outer {
+  animation: none;
+  border-color: var(--green);
+  box-shadow:
+    0 0 18px rgba(0, 255, 157, 0.5),
+    inset 0 0 12px rgba(0, 255, 157, 0.08);
+}
+
+/* Dashed inner ring */
+.c-outer::before {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 220, 255, 0.3);
+  animation: spin-r 6s linear infinite;
+}
+
+#toggle-btn.open .c-outer::before {
+  animation: none;
+  border-color: rgba(0, 255, 157, 0.3);
+}
+
+/* Subtle inner circle line */
+.c-outer::after {
+  content: '';
+  position: absolute;
+  inset: 14px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 220, 255, 0.15);
+}
+
+/* Center dot */
+.c-inner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 14px rgba(0, 220, 255, 0.9);
+  position: relative;
+  z-index: 1;
+  transition: background 0.4s, box-shadow 0.4s;
+}
+
+#toggle-btn.open .c-inner {
+  background: var(--green);
+  box-shadow: 0 0 14px rgba(0, 255, 157, 0.9);
+}
+
+/* ─── FORM OVERLAY ─── */
+#form-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 12;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 7, 9, 0.65);
+  backdrop-filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s;
+}
+
+#form-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+/* ─── LOGIN CARD ─── */
+.login-card {
+  background: var(--panel);
+  border: 1px solid var(--panel-border);
+  border-radius: 14px;
+  padding: 40px 36px;
+  width: 360px;
+  position: relative;
+  box-shadow: var(--glow-cyan), inset 0 0 40px rgba(0, 220, 255, 0.03);
+  animation: fadein 0.5s ease both;
+}
+
+/* Corner accents */
+.login-card::before,
+.login-card::after {
+  content: '';
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border-color: var(--cyan);
+  border-style: solid;
+}
+
+.login-card::before {
+  top: -1px;
+  left: -1px;
+  border-width: 2px 0 0 2px;
+}
+
+.login-card::after {
+  bottom: -1px;
+  right: -1px;
+  border-width: 0 2px 2px 0;
+}
+
+/* ─── CLOSE BUTTON ─── */
+#close-form {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  background: none;
+  border: none;
+  color: var(--text-dim);
+  font-size: 18px;
+  cursor: pointer;
+  line-height: 1;
+  transition: color 0.2s;
+  font-family: var(--font-mono);
+}
+
+#close-form:hover {
+  color: var(--cyan);
+}
+
+/* ─── STATUS DOTS ─── */
+.status-bar {
+  display: flex;
+  gap: 7px;
+  margin-bottom: 22px;
+  align-items: center;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.3s;
+  background: var(--cyan);
+  box-shadow: 0 0 6px var(--cyan);
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.6s;
+  background: var(--purple);
+  box-shadow: 0 0 6px var(--purple);
+}
+
+/* ─── CARD TYPOGRAPHY ─── */
+.lbl {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+
+.ltitle {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--text-bright);
+  margin-bottom: 28px;
+  letter-spacing: 2px;
+  line-height: 1.2;
+}
+
+/* ─── FORM FIELDS ─── */
+.field {
+  margin-bottom: 18px;
+}
+
+.field label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-bottom: 7px;
+}
+
+.field input {
+  width: 100%;
+  background: rgba(0, 220, 255, 0.04);
+  border: 1px solid var(--panel-border);
+  border-radius: 7px;
+  padding: 11px 14px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.field input:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 2px rgba(0, 220, 255, 0.1);
+}
+
+.field input::placeholder {
+  color: var(--text-dim);
+}
+
+/* ─── AUTHENTICATE BUTTON ─── */
+.login-btn {
+  width: 100%;
+  margin-top: 22px;
+  padding: 13px;
+  background: transparent;
+  border: 1px solid var(--cyan);
+  border-radius: 7px;
+  color: var(--cyan);
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: color 0.3s, box-shadow 0.3s;
+}
+
+.login-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--cyan);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 0;
+}
+
+.login-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.login-btn:hover {
+  color: var(--bg);
+  box-shadow: var(--glow-cyan);
+}
+
+.login-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+/* ─── CARD FOOTER ─── */
+.lfoot {
+  margin-top: 16px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.lfoot a {
+  color: var(--cyan);
+  text-decoration: none;
+  letter-spacing: 1px;
+  transition: text-shadow 0.2s;
+}
+
+.lfoot a:hover {
+  text-shadow: var(--glow-cyan);
+}
+
+/* ─── KEYFRAMES ─── */
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes spin-r {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes fadein {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}

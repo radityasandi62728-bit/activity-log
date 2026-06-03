@@ -29,13 +29,13 @@ navLinks.forEach(link => {
 // CLOCK & DATE
 // ========================
 const DAYS_ID = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jum'at", "Sabtu"];
-const MONTHS_ID = ["Jan","Feb","Mar","Apr","Mei","Jun","Jul","Agu","Sep","Okt","Nov","Des"];
+const MONTHS_ID = ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun", "Jul", "Agu", "Sep", "Okt", "Nov", "Des"];
 
 function updateClock() {
     const now = new Date();
-    const h = String(now.getHours()).padStart(2,'0');
-    const m = String(now.getMinutes()).padStart(2,'0');
-    const s = String(now.getSeconds()).padStart(2,'0');
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    const s = String(now.getSeconds()).padStart(2, '0');
     document.getElementById('clock').textContent = `${h}:${m}:${s}`;
 
     const dayEl = document.getElementById('day');
@@ -58,7 +58,7 @@ function saveTasks(tasks) { localStorage.setItem('nexus_tasks', JSON.stringify(t
 function addLog(text = 'activity') {
     const logs = getLogs();
     const now = new Date();
-    logs.push({ date: now.toISOString().slice(0,10), time: now.toTimeString().slice(0,5), text });
+    logs.push({ date: now.toISOString().slice(0, 10), time: now.toTimeString().slice(0, 5), text });
     saveLogs(logs);
 }
 
@@ -81,7 +81,7 @@ function updateStats() {
     for (let i = 0; i < 365; i++) {
         const d = new Date(today);
         d.setDate(today.getDate() - i);
-        const ds = d.toISOString().slice(0,10);
+        const ds = d.toISOString().slice(0, 10);
         const hasLog = logs.some(l => l.date === ds);
         if (hasLog) streak++;
         else if (i > 0) break;
@@ -148,7 +148,7 @@ function renderHeatmap() {
     const dates = generateDates(365);
 
     dates.forEach(dateObj => {
-        const ds = dateObj.toISOString().slice(0,10);
+        const ds = dateObj.toISOString().slice(0, 10);
         const div = document.createElement('div');
         div.className = 'day';
         const count = counts[ds] || 0;
@@ -185,26 +185,45 @@ function renderMonths() {
 function addMessage() {
     const input = document.getElementById('userInput');
     const val = input.value.trim();
+
     if (!val) return;
 
-    const history = document.getElementById('history');
-    const emptyEl = history.querySelector('.log-empty');
-    if (emptyEl) emptyEl.remove();
+    fetch("/nexus/backend/add_activity.php", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        body: "activity=" + encodeURIComponent(val)
+    })
+    .then(res => res.text())
+    .then(data => {
 
-    const now = new Date();
-    const timeStr = `${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+        const history = document.getElementById('history');
+        const emptyEl = history.querySelector('.log-empty');
 
-    const msg = document.createElement('div');
-    msg.className = 'log-message';
-    msg.innerHTML = `<span class="log-time">${timeStr}</span><span class="log-text">${escapeHtml(val)}</span>`;
-    history.appendChild(msg);
-    history.scrollTop = history.scrollHeight;
+        if (emptyEl) emptyEl.remove();
 
-    input.value = '';
-    addLog(val);
-    renderHeatmap();
-    updateStats();
-    saveHistory();
+        const now = new Date();
+
+        const timeStr =
+            `${String(now.getHours()).padStart(2, '0')}:` +
+            `${String(now.getMinutes()).padStart(2, '0')}`;
+
+        const msg = document.createElement('div');
+
+        msg.className = 'log-message';
+        msg.innerHTML =
+            `<span class="log-time">${timeStr}</span>
+             <span class="log-text">${escapeHtml(val)}</span>`;
+
+        history.appendChild(msg);
+        history.scrollTop = history.scrollHeight;
+        input.value = '';
+
+        addLog(val);
+        renderHeatmap();
+        updateStats();
+    });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -226,6 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
     renderTasks();
     addLog('session_start');
     loadHistory();
+
 
     // Close modals
     document.getElementById('closeDaily').addEventListener('click', () => {
@@ -253,20 +273,60 @@ document.addEventListener('DOMContentLoaded', () => {
             appendBotMessage(ch, "Halo! Aku CELIA, asisten AI-mu. Ada yang bisa aku bantu hari ini?");
         }
     });
+    const fabToggle = document.getElementById('fabToggle');
+    const fabContainer = document.getElementById('fabContainer');
+
+    fabToggle.addEventListener('click', () => {
+        fabContainer.classList.toggle('active');
+
+        if (fabContainer.classList.contains('active')) {
+            fabToggle.innerHTML = '▶';
+        } else {
+            fabToggle.innerHTML = '◀';
+        }
+    });
 });
+// Load History
+    function loadHistory() {
+    fetch("/nexus/backend/add_activity.php")  
+        .then(res => {
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            return res.json();
+        })
+        .then(data => {
+            const history = document.getElementById('history');
+            history.innerHTML = '';
 
-function saveHistory() {
-    localStorage.setItem('activityHistory', document.getElementById('history').innerHTML);
+            if (!data.length) {
+                history.innerHTML = '<div class="log-empty">Belum ada aktivitas tercatat...</div>';
+                return;
+            }
+
+            data.forEach(item => {  
+                const time = new Date(item.created_at);
+                const timeStr =
+                    `${String(time.getHours()).padStart(2, '0')}:` +
+                    `${String(time.getMinutes()).padStart(2, '0')}`;
+
+                const msg = document.createElement('div');
+                msg.className = 'log-message';
+                msg.innerHTML =
+                    `<span class="log-time">${timeStr}</span>
+                     <span class="log-text">${escapeHtml(item.activity_text)}</span>`;
+
+                history.appendChild(msg);
+            });
+
+            history.scrollTop = history.scrollHeight;
+        })
+        .catch(error => {
+            const history = document.getElementById('history');
+            if (history) {
+                history.innerHTML = '<div class="log-empty">Gagal memuat histori aktivitas.</div>';
+            }
+            console.error('Error memuat histori:', error);
+        });
 }
-
-function loadHistory() {
-    const saved = localStorage.getItem('activityHistory');
-
-    if (saved) {
-        document.getElementById('history').innerHTML = saved;
-    }
-}
-
 
 // ========================
 // TASKS
@@ -326,7 +386,7 @@ function renderTasks() {
     const countEl = document.getElementById('taskCount');
     const doneEl = document.getElementById('taskDone');
     if (countEl) countEl.textContent = `${tasks.length} tugas`;
-    if (doneEl) doneEl.textContent = `${tasks.filter(t=>t.done).length} selesai`;
+    if (doneEl) doneEl.textContent = `${tasks.filter(t => t.done).length} selesai`;
 }
 
 // ========================
@@ -415,4 +475,64 @@ function escapeHtml(str) {
     const div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
+}
+const archiveTitle = document.getElementById("archiveTitle");
+const archiveBody = document.getElementById("archiveBody");
+const archiveModal = document.getElementById("archiveModal");
+
+function openArchive(type) {
+
+    archiveModal.classList.add("active");
+
+    if (type === "achievement") {
+
+        archiveTitle.innerText = "ACHIEVEMENT";
+
+        archiveBody.innerHTML = `
+            <div class="badge-card">
+                🏆 Badge 777 Unlocked
+            </div>
+
+            <div class="badge-card locked">
+                🔒 Night Hunter
+            </div>
+        `;
+    }
+
+    else if (type === "stats") {
+
+        archiveTitle.innerText = "STATISTIK";
+
+        archiveBody.innerHTML = `
+            <p>Total Task : 28</p>
+            <p>Current Streak : 7</p>
+            <p>Focus Time : 32 Jam</p>
+        `;
+    }
+
+    else if (type === "activity") {
+
+        archiveTitle.innerText = "ACTIVITY LOG";
+
+        archiveBody.innerHTML = `
+            <p>[07:14] Task completed</p>
+            <p>[09:21] New achievement unlocked</p>
+            <p>[13:08] Daily mission finished</p>
+        `;
+    }
+
+    else if (type === "mission") {
+
+        archiveTitle.innerText = "MISSION PROGRESS";
+
+        archiveBody.innerHTML = `
+            <p>Daily Goal : 70%</p>
+            <p>Weekly Goal : 42%</p>
+            <p>Monthly Goal : 18%</p>
+        `;
+    }
+}
+
+function closeArchive() {
+    archiveModal.classList.remove("active");
 }

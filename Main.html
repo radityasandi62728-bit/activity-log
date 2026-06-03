@@ -1,13 +1,17 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS // Tracker System</title>
+    <title>NEXUS-Tracker Activity</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/pages/main/style.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="pages/main/style.css">
 </head>
+
 <body>
     <!-- Scanline overlay -->
     <div class="scanlines"></div>
@@ -29,7 +33,7 @@
         <nav>
             <a href="#home" class="nav-link active" data-section="home">HOME</a>
             <a href="#profile" class="nav-link" data-section="profile">PROFILE</a>
-            <a href="#celia" class="nav-link" data-section="celia">CELIA</a>
+            <a href="#archive" class="nav-link" data-section="archive">ARCHIVE</a>
             <a href="#about" class="nav-link" data-section="about">ABOUT</a>
         </nav>
         <div class="header-right">
@@ -48,14 +52,13 @@
 
                 <!-- Left: Profile panel -->
                 <aside class="profile-panel">
-                    <div class="panel-header">
-                    </div>
                     <div class="avatar-wrap">
                         <div class="avatar-ring">
                             <div class="avatar-core">
                                 <svg viewBox="0 0 80 80" class="avatar-icon">
-                                    <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
-                                    <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2" />
+                                    <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor"
+                                        stroke-width="2" />
                                 </svg>
                             </div>
                             <div class="avatar-scan"></div>
@@ -82,7 +85,7 @@
                         </div>
                     </div>
                     <div class="achievement-block">
-                        <div class="ach-title">// ACHIEVEMENTS</div>
+                        <div class="ach-title">ACHIEVEMENTS</div>
                         <div class="ach-list">
                             <div class="ach-item locked"><span>⬡</span> First Log</div>
                             <div class="ach-item locked"><span>⬡</span> 7-Day Streak</div>
@@ -109,7 +112,8 @@
                                 <div class="log-empty">Belum ada aktivitas tercatat...</div>
                             </div>
                             <div class="log-input-row">
-                                <input type="text" id="userInput" placeholder="Ketik aktivitas..." class="cyber-input"/>
+                                <input type="text" id="userInput" placeholder="Ketik aktivitas..."
+                                    class="cyber-input" />
                                 <button onclick="addMessage()" class="cyber-btn">KIRIM</button>
                             </div>
                         </div>
@@ -117,7 +121,7 @@
 
                     <!-- Heatmap widget -->
                     <div class="widget heatmap-widget">
-                        <div class="widget-label">// ACTIVITY MATRIX — 365 HARI</div>
+                        <div class="widget-label">HEADMAP ACTIVITY — 365 HARI</div>
                         <div class="heatmap-wrapper">
                             <div id="months" class="months"></div>
                             <div id="heatmap" class="heatmap"></div>
@@ -139,73 +143,191 @@
             <!-- PROFILE SECTION -->
             <section id="profile" class="section profile-section">
                 <div class="section-inner">
-                    <div class="section-title">// PROFIL PENGGUNA</div>
+
+                    <div class="section-title">PROFIL PENGGUNA</div>
+
                     <div class="profile-card-full">
-                        <div class="pf-avatar">
-                            <div class="avatar-ring large">
-                                <div class="avatar-core">
-                                    <svg viewBox="0 0 80 80"><circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/><path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+
+                        <!-- LEFT -->
+                        <div class="profile-left">
+
+                            <div class="pf-avatar">
+                                <div class="avatar-ring large">
+                                    <div class="avatar-core">
+                                        <svg viewBox="0 0 80 80">
+                                            <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor"
+                                                stroke-width="2" />
+
+                                            <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor"
+                                                stroke-width="2" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <div class="pf-name">Nama Pengguna</div>
+
+                                <div class="pf-username">
+                                    @username
+                                </div>
+
+                                <div class="pf-role">
+                                    SYSTEM ADMINISTRATOR
                                 </div>
                             </div>
-                            <div class="pf-name">Nama Pengguna</div>
-                            <div class="pf-id">ID: USR_001_ALPHA</div>
+
+                            <div class="pf-stats">
+
+                                <div class="stat-box">
+                                    <span class="stat-label">TOTAL LOG</span>
+                                    <span class="stat-value">128</span>
+                                </div>
+
+                                <div class="stat-box">
+                                    <span class="stat-label">DATA</span>
+                                    <span class="stat-value">24</span>
+                                </div>
+
+                                <div class="stat-box">
+                                    <span class="stat-label">ACCESS</span>
+                                    <span class="stat-value">ADMIN</span>
+                                </div>
+
+                            </div>
+
                         </div>
-                        <div class="pf-info">
-                            <div class="pf-row"><span class="pf-key">STATUS</span><span class="pf-val pf-online">● ONLINE</span></div>
-                            <div class="pf-row"><span class="pf-key">BERGABUNG</span><span class="pf-val">2025-01-01</span></div>
-                            <div class="pf-row"><span class="pf-key">LEVEL</span><span class="pf-val">ALPHA-7</span></div>
-                            <div class="pf-row"><span class="pf-key">TOTAL LOG</span><span class="pf-val" id="profileTotalLog">0</span></div>
+
+                        <!-- RIGHT -->
+                        <div class="profile-right">
+
+                            <div class="profile-header">
+                                <h2>WELCOME BACK</h2>
+
+                                <p>
+                                    Monitoring and management system panel.
+                                </p>
+                            </div>
+
+                            <div class="pf-info">
+
+                                <div class="pf-row">
+                                    <span class="pf-key">STATUS</span>
+                                    <span class="pf-val pf-online">● ONLINE</span>
+                                </div>
+
+                                <div class="pf-row">
+                                    <span class="pf-key">EMAIL</span>
+                                    <span class="pf-val">user@email.com</span>
+                                </div>
+
+                                <div class="pf-row">
+                                    <span class="pf-key">BERGABUNG</span>
+                                    <span class="pf-val">2025-01-01</span>
+                                </div>
+
+                                <div class="pf-row">
+                                    <span class="pf-key">LAST LOGIN</span>
+                                    <span class="pf-val">2026-06-01 11:30</span>
+                                </div>
+
+                                <div class="pf-row">
+                                    <span class="pf-key">USER ID</span>
+                                    <span class="pf-val">USR_001_ALPHA</span>
+                                </div>
+
+                            </div>
+
+                            <div class="profile-actions">
+
+                                <button class="profile-btn">
+                                    EDIT PROFILE
+                                </button>
+
+                                <button class="profile-btn">
+                                    SETTINGS
+                                </button>
+
+                                <button class="profile-btn logout-btn">
+                                    LOGOUT
+                                </button>
+
+                            </div>
+
                         </div>
+
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- ARCHIVE SECTION -->
+            <section id="archive" class="section archive-section">
+                <div class="section-inner">
+                    <div class="section-title">ARCHIVE CENTER</div>
+                    <div class="archive-panel">
+                        <button class="archive-btn archivebtn-modal" onclick="openArchive('achievement')">
+                            🏆 Achievement
+                        </button>
+                        <button class="archive-btn archivebtn-modal" onclick="openArchive('stats')">
+                            📊 Statistik
+                        </button>
+                        <button class="archive-btn archivebtn-modal" onclick="openArchive('activity')">
+                            📁 Activity Log
+                        </button>
+                        <button class="archive-btn archivebtn-modal" onclick="openArchive('mission')">
+                            🎯 Mission Progress
+                        </button>
                     </div>
                 </div>
             </section>
 
-            <!-- CELIA SECTION -->
-            <section id="celia" class="section celia-section">
-                <div class="section-inner">
-                    <div class="section-title">CELIA — AI ASSISTANT</div>
-                    <div class="celia-full-chat">
-                        <div class="celia-header-banner">
-                            <div class="celia-avatar-lg"></div>
-                            <div>
-                                <div class="celia-name">CELIA</div>
-                                <div class="celia-sub"></div>
-                            </div>
-                            <div class="celia-pulse"></div>
-                        </div>
-                        <div id="celiaChatFull" class="chat-history-full"></div>
-                        <div class="chat-input-row">
-                            <input type="text" id="celiaInputFull" placeholder="Kirim pesan ke CELIA..." class="cyber-input"/>
-                            <button onclick="sendCeliaFull()" class="cyber-btn">SEND</button>
-                        </div>
+            <!-- POPUP -->
+            <div id="archiveModal" class="archive-modal">
+
+                <div class="archive-modal-content">
+
+                    <div class="archive-modal-header">
+                        <h2 id="archiveTitle">TITLE</h2>
+
+                        <button class="close-modal" onclick="closeArchive()">
+                            ✕
+                        </button>
                     </div>
+
+                    <div id="archiveBody" class="archive-body">
+                        Content
+                    </div>
+
                 </div>
-            </section>
+            </div>
 
             <!-- ABOUT SECTION -->
             <section id="about" class="section about-section">
                 <div class="section-inner">
-                    <div class="section-title">// TENTANG NEXUS</div>
+                    <div class="section-title">TENTANG NEXUS</div>
                     <div class="about-grid">
                         <div class="about-card">
                             <div class="about-icon">⬡</div>
                             <div class="about-card-title">ACTIVITY TRACKER</div>
-                            <p>Catat setiap aktivitas harianmu dan visualisasikan progres dengan activity heatmap seperti GitHub.</p>
+                            <p>Catat setiap aktivitas harianmu dan visualisasikan progres dengan activity heatmap
+                                seperti GitHub.</p>
                         </div>
                         <div class="about-card">
                             <div class="about-icon">⬡</div>
                             <div class="about-card-title">AI ASSISTANT — CELIA</div>
-                            <p>CELIA adalah asisten AI yang siap membantu pertanyaan, motivasi, dan perencanaan harianmu.</p>
+                            <p>CELIA adalah asisten AI yang siap membantu pertanyaan, motivasi, dan perencanaan
+                                harianmu.</p>
                         </div>
                         <div class="about-card">
                             <div class="about-icon">⬡</div>
                             <div class="about-card-title">DAILY TASK</div>
-                            <p>Kelola tugas harian dengan sistem task manager terintegrasi. Tandai selesai dan lacak produktivitas.</p>
+                            <p>Kelola tugas harian dengan sistem task manager terintegrasi. Tandai selesai dan lacak
+                                produktivitas.</p>
                         </div>
                         <div class="about-card">
                             <div class="about-icon">⬡</div>
                             <div class="about-card-title">STATISTIK REAL-TIME</div>
-                            <p>Monitor total hari aktif, jam, streak, dan tugas secara real-time langsung dari dashboard.</p>
+                            <p>Monitor total hari aktif, jam, streak, dan tugas secara real-time langsung dari
+                                dashboard.</p>
                         </div>
                     </div>
                     <div class="about-version">NEXUS v2.0.0 — Built with Futuristic Tech Stack</div>
@@ -214,29 +336,34 @@
 
         </main>
     </div>
+    <!-- Fabs-->
+    <div class="fab-container" id="fabContainer">
 
-    <!-- Floating: Daily Task button -->
-    <div class="fab" id="dailytask-fab" title="Daily Task">
-        <span>☰</span>
-        <div class="fab-label">TASK</div>
+        <div class="fab" id="dailytask-fab" title="Daily Task">
+            <span>☰</span>
+            <div class="fab-label">TASK</div>
+        </div>
+
+        <div class="fab fab-celia" id="celia-fab" title="CELIA Chatbot">
+            <div class="fab-label">CELIA</div>
+        </div>
+
     </div>
 
-    <!-- Floating: Celia chatbot button -->
-    <div class="fab fab-celia" id="celia-fab" title="CELIA Chatbot">
-        <span>C</span>
-        <div class="fab-label">CELIA</div>
+    <div class="fab-toggle" id="fabToggle">
+        ◀
     </div>
 
     <!-- Daily Task Modal -->
     <div class="modal-overlay" id="dailyform-overlay">
         <div class="modal" id="dailyform">
             <div class="modal-header">
-                <span class="modal-title">// DAILY TASK</span>
+                <span class="modal-title">DAILY TASK</span>
                 <button class="modal-close" id="closeDaily">✕</button>
             </div>
             <div class="modal-body">
                 <div class="task-input-row">
-                    <input type="text" id="taskInput" placeholder="Tambah tugas baru..." class="cyber-input"/>
+                    <input type="text" id="taskInput" placeholder="Tambah tugas baru..." class="cyber-input" />
                     <button onclick="addTask()" class="cyber-btn">ADD</button>
                 </div>
                 <ul id="taskList" class="task-list"></ul>
@@ -250,7 +377,7 @@
 
     <!-- Celia Chat Modal -->
     <div class="modal-overlay" id="celiaform-overlay">
-        <div class="modal" id="celiaform">
+        <div class="modal celia-modal" id="celiaform">
             <div class="modal-header">
                 <div class="celia-modal-title">
                     <div class="celia-avatar-sm"></div>
@@ -264,13 +391,14 @@
             <div class="modal-body">
                 <div id="chatHistory" class="chat-history"></div>
                 <div class="chat-input-row">
-                    <input type="text" id="chatInput" placeholder="Tanya CELIA..." class="cyber-input"/>
+                    <input type="text" id="chatInput" placeholder="Tanya CELIA..." class="cyber-input" />
                     <button onclick="sendMessage()" class="cyber-btn">SEND</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="/pages/main/hello.js"></script>
+    <script src="pages/main/hello.js"></script>
 </body>
+
 </html>

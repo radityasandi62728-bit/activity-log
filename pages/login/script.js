@@ -43,3 +43,6 @@ closeBtn.addEventListener('click', () => {
   hint.classList.remove('hidden');
   doorInfo.classList.remove('hidden');
 });
+ document.getElementById("auth-btn").onclick = function () {
+    window.location.href = "main.html";
+  };

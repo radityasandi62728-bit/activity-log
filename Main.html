@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="id">
 
@@ -38,8 +39,8 @@
         </nav>
         <div class="header-right">
             <div class="user-tag">
-                <span class="user-id">USR_001</span>
-                <div class="avatar-mini"></div>
+                <span class="user-id" id="displayName">xxx</span>
+                <div class="avatar-mini" id="miniAvatar"></div>
             </div>
         </div>
     </header>
@@ -53,18 +54,18 @@
                 <!-- Left: Profile panel -->
                 <aside class="profile-panel">
                     <div class="avatar-wrap">
-                        <div class="avatar-ring">
-                            <div class="avatar-core">
+                        <div class="avatar-ring" >
+                            <div class="avatar-core" id="mainAvatar">
                                 <svg viewBox="0 0 80 80" class="avatar-icon">
-                                    <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2" />
+                                    <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
                                     <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor"
                                         stroke-width="2" />
                                 </svg>
                             </div>
                             <div class="avatar-scan"></div>
                         </div>
-                        <div class="user-name">Nama Pengguna</div>
-                        <div class="user-rank">RANK: ALPHA</div>
+                        <div class="user-name" id="displayName">Nama Pengguna</div>
+                        <div class="user-rank" id="displayUsername">@username</div>
                     </div>
                     <div class="stats-grid">
                         <div class="stat-cell">
@@ -153,7 +154,7 @@
 
                             <div class="pf-avatar">
                                 <div class="avatar-ring large">
-                                    <div class="avatar-core">
+                                    <div class="avatar-core" id="profileAvatar">
                                         <svg viewBox="0 0 80 80">
                                             <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor"
                                                 stroke-width="2" />
@@ -164,9 +165,9 @@
                                     </div>
                                 </div>
 
-                                <div class="pf-name">Nama Pengguna</div>
+                                <div class="pf-name" id="profileName">Nama Pengguna</div>
 
-                                <div class="pf-username">
+                                <div class="pf-username" id="profileUsername">
                                     @username
                                 </div>
 
@@ -179,7 +180,7 @@
 
                                 <div class="stat-box">
                                     <span class="stat-label">TOTAL LOG</span>
-                                    <span class="stat-value">128</span>
+                                    <span class="stat-value" id="totalLogs">0</span>
                                 </div>
 
                                 <div class="stat-box">
@@ -216,34 +217,30 @@
 
                                 <div class="pf-row">
                                     <span class="pf-key">EMAIL</span>
-                                    <span class="pf-val">user@email.com</span>
+                                    <span class="pf-val" id="profileEmail">user@email.com</span>
                                 </div>
 
                                 <div class="pf-row">
                                     <span class="pf-key">BERGABUNG</span>
-                                    <span class="pf-val">2025-01-01</span>
+                                    <span class="pf-val" id="profileJoin">2025-01-01</span>
                                 </div>
 
                                 <div class="pf-row">
                                     <span class="pf-key">LAST LOGIN</span>
-                                    <span class="pf-val">2026-06-01 11:30</span>
+                                    <span class="pf-val" id="profileLogin">2026-06-01 11:30</span>
                                 </div>
 
                                 <div class="pf-row">
                                     <span class="pf-key">USER ID</span>
-                                    <span class="pf-val">USR_001_ALPHA</span>
+                                    <span class="pf-val" id="profileUID">USR_001_ALPHA</span>
                                 </div>
 
                             </div>
 
                             <div class="profile-actions">
 
-                                <button class="profile-btn">
+                                <button class="profile-btn" onclick="openModal()">
                                     EDIT PROFILE
-                                </button>
-
-                                <button class="profile-btn">
-                                    SETTINGS
                                 </button>
 
                                 <button class="profile-btn logout-btn">
@@ -257,6 +254,101 @@
                     </div>
 
                 </div>
+                <div class="modal-overlay hidden" id="overlay" onclick="handleOverlayClick(event)">
+                    <div class="modal" id="modal">
+
+                        <div class="modal-header">
+                            <span class="modal-title">EDIT PROFILE</span>
+                            <button class="modal-close" onclick="closeModal()">✕</button>
+                        </div>
+
+                        <div class="modal-body modal-body-flex">
+
+                            <!-- MODAL LEFT -->
+                            <div class="modal-left">
+
+                                <div class="modal-avatar-wrap" onclick="document.getElementById('fileInput').click()">
+                                    <div class="avatar-big" id="modalAvatar">
+                                        <svg viewBox="0 0 80 80">
+                                            <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor"
+                                                stroke-width="2" />
+                                            <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor"
+                                                stroke-width="2" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <span class="upload-hint">KLIK FOTO UNTUK<br>MENGGANTI</span>
+
+                                <input type="file" id="fileInput" accept="image/*" onchange="handleFileUpload(event)">
+
+                            </div>
+
+                            <!-- MODAL RIGHT -->
+                            <div class="modal-right">
+
+                                <div class="field-row">
+                                    <div class="field-group">
+                                        <label class="field-label">NAMA LENGKAP</label>
+                                        <input class="field-input" id="inputName" type="text"
+                                            placeholder="Nama Pengguna">
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">USERNAME</label>
+                                        <input class="field-input" id="inputUsername" type="text"
+                                            placeholder="@username">
+                                    </div>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">EMAIL</label>
+                                    <input class="field-input" id="inputEmail" type="email"
+                                        placeholder="user@email.com">
+                                </div>
+
+                                <div class="field-row">
+                                    <div class="field-group">
+                                        <label class="field-label">USER ID</label>
+                                        <input class="field-input" id="inputUid" type="text" disabled>
+                                    </div>
+                                    <div class="field-group">
+                                        <label class="field-label">BERGABUNG</label>
+                                        <input class="field-input" id="inputJoin" type="text" disabled>
+                                    </div>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">LAST LOGIN</label>
+                                    <input class="field-input" id="inputLogin" type="text" disabled>
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">
+                                        PASSWORD BARU
+                                        <span class="field-note">&nbsp;(KOSONGKAN JIKA TIDAK DIUBAH)</span>
+                                    </label>
+                                    <input class="field-input" id="inputPass" type="password" placeholder="••••••••••">
+                                </div>
+
+                                <div class="field-group">
+                                    <label class="field-label">KONFIRMASI PASSWORD</label>
+                                    <input class="field-input" id="inputPassConf" type="password"
+                                        placeholder="••••••••••">
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button class="btn-cancel" onclick="closeModal()">BATAL</button>
+                            <button class="btn-save" id="btnSave" onclick="saveProfile()">SIMPAN PERUBAHAN</button>
+                        </div>
+
+                    </div>
+                </div>
+
+                <!-- TOAST NOTIFICATION -->
+                <div class="toast" id="toast"></div>
             </section>
 
             <!-- ARCHIVE SECTION -->

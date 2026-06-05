@@ -1,5 +1,4 @@
 
-
 const toggleBtn   = document.getElementById('toggle-btn');
 const door        = document.getElementById('door');
 const formOverlay = document.getElementById('form-overlay');
@@ -45,4 +44,4 @@ closeBtn.addEventListener('click', () => {
 });
  document.getElementById("auth-btn").onclick = function () {
     window.location.href = "main.html";
-  };
+  }; 

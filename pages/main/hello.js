@@ -178,6 +178,21 @@ function renderMonths() {
         }
     });
 }
+function updateTotalDays() {
+
+    const counts = getHeatCounts();
+
+    // jumlah tanggal yang punya activity
+    const totalDays =
+        Object.keys(counts).length;
+
+    const el =
+        document.getElementById('totalDays');
+
+    if (el) {
+        el.textContent = totalDays;
+    }
+}
 
 // ========================
 // ACTIVITY LOG (HOME)
@@ -195,35 +210,38 @@ function addMessage() {
         },
         body: "activity=" + encodeURIComponent(val)
     })
-    .then(res => res.text())
-    .then(data => {
+        .then(res => res.text())
+        .then(data => {
 
-        const history = document.getElementById('history');
-        const emptyEl = history.querySelector('.log-empty');
+            const history = document.getElementById('history');
+            const emptyEl = history.querySelector('.log-empty');
 
-        if (emptyEl) emptyEl.remove();
+            if (emptyEl) emptyEl.remove();
 
-        const now = new Date();
+            const now = new Date();
 
-        const timeStr =
-            `${String(now.getHours()).padStart(2, '0')}:` +
-            `${String(now.getMinutes()).padStart(2, '0')}`;
+            const timeStr =
+                `${String(now.getHours()).padStart(2, '0')}:` +
+                `${String(now.getMinutes()).padStart(2, '0')}`;
 
-        const msg = document.createElement('div');
+            const msg = document.createElement('div');
 
-        msg.className = 'log-message';
-        msg.innerHTML =
-            `<span class="log-time">${timeStr}</span>
+            msg.className = 'log-message';
+            msg.innerHTML =
+                `<span class="log-time">${timeStr}</span>
              <span class="log-text">${escapeHtml(val)}</span>`;
 
-        history.appendChild(msg);
-        history.scrollTop = history.scrollHeight;
-        input.value = '';
+            history.appendChild(msg);
+            history.scrollTop = history.scrollHeight;
+            input.value = '';
 
-        addLog(val);
-        renderHeatmap();
-        updateStats();
-    });
+            addLog(val);
+            renderHeatmap();
+            updateTotalDays();
+            updateStreak();
+            updateStats();
+            loadStats();
+        });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -238,9 +256,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ti = document.getElementById('taskInput');
     if (ti) ti.addEventListener('keypress', e => { if (e.key === 'Enter') addTask(); });
-
+    loadProfile();
     renderHeatmap();
     renderMonths();
+    updateTotalDays();
+    updateStreak();
     updateStats();
     renderTasks();
     addLog('session_start');
@@ -287,8 +307,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 // Load History
-    function loadHistory() {
-    fetch("/nexus/backend/add_activity.php")  
+function loadHistory() {
+    fetch("/nexus/backend/add_activity.php")
         .then(res => {
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             return res.json();
@@ -302,7 +322,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            data.forEach(item => {  
+            data.forEach(item => {
                 const time = new Date(item.created_at);
                 const timeStr =
                     `${String(time.getHours()).padStart(2, '0')}:` +
@@ -503,10 +523,18 @@ function openArchive(type) {
 
         archiveTitle.innerText = "STATISTIK";
 
+        const totalLogs =
+            document.getElementById('totalLogs')
+                ?.textContent || 0;
+
+        const totalStreak =
+            document.getElementById('totalStreak')
+                ?.textContent || 0;
+
         archiveBody.innerHTML = `
-            <p>Total Task : 28</p>
-            <p>Current Streak : 7</p>
-            <p>Focus Time : 32 Jam</p>
+            <p>Total Logs : ${totalLogs}</p>
+            <p>Current Streak : ${totalStreak}</p>
+            <p>Total Task : COMING SOON</p>
         `;
     }
 
@@ -536,3 +564,435 @@ function openArchive(type) {
 function closeArchive() {
     archiveModal.classList.remove("active");
 }
+
+/**
+    * State profil lokal.
+    * Ganti nilai awal ini dengan data dari server/database kamu.
+    */
+let profileData = {
+    name: 'Nama Pengguna',
+    username: '@username',
+    email: 'user@email.com',
+    uid: 'USR_001_ALPHA',
+    join: '2025-01-01',
+    login: '2026-06-01 11:30',
+    avatarSrc: null,
+    logs: null,
+    data: null,
+    access: null
+};
+
+function fetchStatsFromDB() {
+
+    // Simulasi delay DB response
+    setTimeout(() => {
+        updateStats(128, 24, 'ADMIN');
+    }, 1400);
+}
+
+function updateStats(logs, data, access) {
+    profileData.logs = logs;
+    profileData.data = data;
+    profileData.access = access;
+
+    setStatEl('statLogs', logs);
+    setStatEl('statData', data);
+    setStatEl('statAccess', access);
+    setStatEl('mStatLogs', logs);
+    setStatEl('mStatData', data);
+    setStatEl('mStatAccess', access);
+}
+
+function setStatEl(id, value) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = value;
+    el.classList.remove('loading');
+}
+
+/* ------------------------------------------------------------------
+ * MODAL — BUKA & TUTUP
+ * ------------------------------------------------------------------ */
+function openModal() {
+    // Isi form dengan data saat ini
+    document.getElementById('inputName').value = profileData.name;
+    document.getElementById('inputUsername').value = profileData.username;
+    document.getElementById('inputEmail').value = profileData.email;
+    document.getElementById('inputUid').value = profileData.uid;
+    document.getElementById('inputJoin').value = profileData.join;
+    document.getElementById('inputLogin').value = profileData.login;
+    document.getElementById('inputPass').value = '';
+    document.getElementById('inputPassConf').value = '';
+
+    // Sync stats ke modal
+    syncModalStats();
+
+    // Sync avatar ke modal
+    const ma = document.getElementById('modalAvatar');
+    if (profileData.avatarSrc) {
+        ma.innerHTML = `<img src="${profileData.avatarSrc}" alt="Foto profil">`;
+    } else {
+        ma.innerHTML = defaultAvatarSVG();
+    }
+
+    const overlay = document.getElementById('overlay');
+    overlay.classList.remove('hidden');
+    overlay.classList.add('active');
+}
+
+function closeModal() {
+    const overlay = document.getElementById('overlay');
+    overlay.classList.add('hidden');
+    overlay.classList.remove('active');
+}
+
+function handleOverlayClick(e) {
+    if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+function syncModalStats() {
+    const ids = ['mStatLogs', 'mStatData', 'mStatAccess'];
+    const vals = [profileData.logs, profileData.data, profileData.access];
+    ids.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (vals[i] !== null) {
+            el.textContent = vals[i];
+            el.classList.remove('loading');
+        } else {
+            el.textContent = '···';
+            el.classList.add('loading');
+        }
+    });
+}
+
+/* ------------------------------------------------------------------
+ * UPLOAD FOTO
+ * ------------------------------------------------------------------ */
+
+let selectedAvatarFile = null;
+
+function handleFileUpload(event) {
+
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    // simpan file asli
+    selectedAvatarFile = file;
+
+    // buat preview sementara
+    const imageUrl = URL.createObjectURL(file);
+
+    // simpan ke state
+    profileData.avatarSrc = imageUrl;
+
+    const imgHTML =
+        `<img src="${imageUrl}"
+              style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+              alt="avatar">`;
+
+    syncAvatarUI(imgHTML);
+}
+/* ------------------------------------------------------------------
+ * SIMPAN PROFIL
+ * Ganti bagian fetch() di bawah dengan endpoint API kamu.
+ * ------------------------------------------------------------------ */
+function saveProfile() {
+    const name = document.getElementById('inputName').value.trim();
+    const username = document.getElementById('inputUsername').value.trim();
+    const email = document.getElementById('inputEmail').value.trim();
+    const pass = document.getElementById('inputPass').value;
+    const passConf = document.getElementById('inputPassConf').value;
+
+    // Validasi
+    if (!name) {
+        showToast('⚠ NAMA TIDAK BOLEH KOSONG', true);
+        return;
+    }
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        showToast('⚠ FORMAT EMAIL TIDAK VALID', true);
+        return;
+    }
+    if (pass && pass !== passConf) {
+        showToast('⚠ PASSWORD TIDAK COCOK', true);
+        return;
+    }
+
+    // Loading state
+    const btn = document.getElementById('btnSave');
+    btn.textContent = 'MENYIMPAN···';
+    btn.disabled = true;
+
+    // Simulasi delay response server
+    const formData = new FormData();
+
+    formData.append("name", name);
+    formData.append("username", username);
+    formData.append("email", email);
+
+    if (selectedAvatarFile) {
+        formData.append("avatar", selectedAvatarFile);
+    }
+
+    fetch('/nexus/backend/update_profile.php', {
+
+        method: 'POST',
+        body: formData
+
+    })
+        .then(response => response.text())
+        .then(data => {
+
+            console.log(data);
+
+            data = JSON.parse(data);
+
+            if (data.success) {
+
+                applyProfileUpdate(name, username, email);
+
+                showToast('✓ PROFIL BERHASIL DIPERBARUI');
+
+            } else {
+
+                showToast(data.message, true);
+            }
+
+            btn.textContent = 'SIMPAN PERUBAHAN';
+            btn.disabled = false;
+        })
+        .catch(error => {
+
+            console.error(error);
+
+            showToast('SERVER ERROR', true);
+
+            // RESET BUTTON
+            btn.textContent = 'SIMPAN PERUBAHAN';
+            btn.disabled = false;
+        });
+}
+
+function applyProfileUpdate(name, username, email) {
+    profileData.name = name;
+    profileData.username = username;
+    profileData.email = email;
+
+    document.getElementById('displayName').textContent = name;
+    document.getElementById('displayUsername').textContent = username;
+    document.getElementById('displayEmail').textContent = email;
+
+    if (profileData.avatarSrc) {
+        const avatarHTML = `<img src="${profileData.avatarSrc}"
+                style="width:100%;height:100%;object-fit:cover;border-radius:50%;"
+                alt="Foto profil">`;
+
+        syncAvatarUI(avatarHTML);
+    }
+
+    closeModal();
+    showToast('✓ PROFIL BERHASIL DIPERBARUI');
+}
+
+/* ------------------------------------------------------------------
+ * TOAST NOTIFICATION
+ * ------------------------------------------------------------------ */
+function showToast(msg, isError = false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.toggle('error', isError);
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+/* ------------------------------------------------------------------
+ * HELPER
+ * ------------------------------------------------------------------ */
+function defaultAvatarSVG() {
+    return `<svg viewBox="0 0 80 80" style="width:66px;height:66px;color:var(--text-dim)">
+        <circle cx="40" cy="30" r="18" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M10 75 Q10 55 40 55 Q70 55 70 75" fill="none" stroke="currentColor" stroke-width="2"/>
+      </svg>`;
+}
+
+function syncAvatarUI(avatarHTML) {
+    const targets = ['mainAvatar', 'profileAvatar', 'miniAvatar', 'modalAvatar'];
+    targets.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = avatarHTML;
+    });
+}
+
+function loadProfile() {
+
+    fetch('/nexus/backend/get_profile.php')
+
+        .then(response => response.json())
+
+        .then(result => {
+
+            if (!result.success) return;
+
+            const data = result.data;
+
+            // simpan ke state
+            profileData.name = data.name;
+            profileData.username = data.username;
+            profileData.email = data.email;
+            profileData.avatarSrc = data.avatar;
+
+            const displayName =
+                document.getElementById('displayName');
+
+            if (displayName) {
+                displayName.textContent =
+                    data.name || 'NO NAME';
+            }
+
+            const displayUsername =
+                document.getElementById('displayUsername');
+
+            if (displayUsername) {
+                displayUsername.textContent =
+                    data.username || '@unknown';
+            }
+
+            const displayEmail =
+                document.getElementById('displayEmail');
+
+            if (displayEmail) {
+                displayEmail.textContent =
+                    data.email || 'no@email';
+            }
+            const profileName =
+                document.getElementById('profileName');
+
+            if (profileName) {
+                profileName.textContent =
+                    data.name || 'NO NAME';
+            }
+
+            const profileUsername =
+                document.getElementById('profileUsername');
+
+            if (profileUsername) {
+                profileUsername.textContent =
+                    data.username || '@unknown';
+            }
+
+            const profileEmail =
+                document.getElementById('profileEmail');
+
+            if (profileEmail) {
+                profileEmail.textContent =
+                    data.email || 'no@email';
+            }
+
+            const profileJoin =
+                document.getElementById('profileJoin');
+
+            if (profileJoin) {
+                profileJoin.textContent =
+                    data.created_at || '-';
+            }
+
+            const profileLogin =
+                document.getElementById('profileLogin');
+
+            if (profileLogin) {
+                profileLogin.textContent =
+                    data.last_login || '-';
+            }
+
+            const profileUID =
+                document.getElementById('profileUID');
+
+            if (profileUID) {
+                profileUID.textContent =
+                    'USR_' + data.id;
+            }
+            // avatar
+            const avatarHTML = data.avatar
+                ? `<img src="${data.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt="Foto profil">`
+                : defaultAvatarSVG();
+
+            syncAvatarUI(avatarHTML);
+        })
+
+        .catch(err => {
+
+            console.error('LOAD PROFILE ERROR:', err);
+
+        });
+}
+function loadStats() {
+
+    fetch('/nexus/backend/get_stats.php')
+
+        .then(response => response.json())
+
+        .then(data => {
+
+            if (!data.success) return;
+
+            const totalLogs =
+                document.getElementById('totalLogs');
+
+            if (totalLogs) {
+                totalLogs.textContent =
+                    data.totalLogs;
+            }
+        })
+
+        .catch(err => {
+
+            console.error('LOAD STATS ERROR:', err);
+
+        });
+}
+function updateStreak() {
+
+    const counts = getHeatCounts();
+
+    const activeDates =
+        Object.keys(counts).sort();
+
+    if (activeDates.length === 0) {
+
+        document.getElementById('totalStreak')
+            .textContent = 0;
+
+        return;
+    }
+
+    let streak = 0;
+
+    const today = new Date();
+
+    for (let i = 0; i < 365; i++) {
+
+        const checkDate = new Date(today);
+
+        checkDate.setDate(today.getDate() - i);
+
+        const ds =
+            checkDate.toISOString().slice(0, 10);
+
+        if (counts[ds]) {
+
+            streak++;
+
+        } else {
+
+            break;
+        }
+    }
+
+    document.getElementById('totalStreak')
+        .textContent = streak;
+}
+loadProfile();
+loadStats();
+fetchStatsFromDB();
+

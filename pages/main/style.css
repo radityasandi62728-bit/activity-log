@@ -2013,6 +2013,13 @@ main {
     padding-top: 10px;
     border-top: 1px solid var(--panel-border);
 }
+.task-time {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-dim);
+    display: block;
+    margin-top: 3px;
+}
 
 /* Responsive */
 @media (max-width: 900px) {

@@ -87,7 +87,6 @@ function updateStats() {
         else if (i > 0) break;
     }
     document.getElementById('totalStreak').textContent = streak;
-    document.getElementById('totalHours').textContent = Math.floor(logs.length * 0.5);
     document.getElementById('totalTasks').textContent = tasks.filter(t => t.done).length;
 
     // Achievements
@@ -262,7 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTotalDays();
     updateStreak();
     updateStats();
-    renderTasks();
+    loadTasks();
+    loadTotalHours();
     addLog('session_start');
     loadHistory();
 
@@ -351,62 +351,118 @@ function loadHistory() {
 // ========================
 // TASKS
 // ========================
+
+function formatTime(datetimeStr) {
+    if (!datetimeStr) return null;
+    const d = new Date(datetimeStr);
+    return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+}
+
 function addTask() {
     const input = document.getElementById('taskInput');
     const val = input.value.trim();
     if (!val) return;
-    const tasks = getTasks();
-    tasks.push({ id: Date.now(), text: val, done: false });
-    saveTasks(tasks);
-    input.value = '';
-    renderTasks();
-    updateStats();
+
+    fetch('/nexus/backend/add_task.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'text=' + encodeURIComponent(val)
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                input.value = '';
+                loadTasks();
+            }
+        });
 }
 
-function toggleTask(id) {
-    const tasks = getTasks();
-    const t = tasks.find(x => x.id === id);
-    if (t) t.done = !t.done;
-    saveTasks(tasks);
-    renderTasks();
-    updateStats();
+function toggleTask(id, currentDone) {
+    const newDone = currentDone ? 0 : 1;
+
+    fetch('/nexus/backend/update_task.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `id=${id}&done=${newDone}`
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                loadTasks();
+                loadTotalHours();
+            }
+        });
 }
 
 function deleteTask(id) {
-    let tasks = getTasks();
-    tasks = tasks.filter(x => x.id !== id);
-    saveTasks(tasks);
-    renderTasks();
-    updateStats();
+    fetch('/nexus/backend/delete_task.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: 'id=' + id
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) loadTasks();
+        });
 }
 
-function renderTasks() {
+function loadTasks() {
+    fetch('/nexus/backend/get_task.php')
+        .then(res => {
+            if (!res.ok) throw new Error('Gagal memuat tugas');
+            return res.json();
+        })
+        .then(data => {
+            if (!data.success) return;
+            renderTasksFromDB(data.data || []);
+            updateTaskCount(data.data || []);
+        })
+        .catch(error => {
+            console.error('Error memuat tugas:', error);
+        });
+}
+
+function renderTasksFromDB(tasks) {
     const list = document.getElementById('taskList');
     if (!list) return;
-    const tasks = getTasks();
     list.innerHTML = '';
 
     if (!tasks.length) {
-        list.innerHTML = '<li style="font-family: var(--font-mono); font-size: 11px; color: var(--text-dim); text-align: center; padding: 16px;">Belum ada tugas. Tambahkan tugas baru!</li>';
-    } else {
-        tasks.forEach(t => {
-            const li = document.createElement('li');
-            li.className = 'task-item';
-            li.innerHTML = `
-                <div class="task-checkbox ${t.done ? 'checked' : ''}" onclick="toggleTask(${t.id})"></div>
-                <div class="task-text-wrap">
-                    <span class="task-text ${t.done ? 'done' : ''}">${escapeHtml(t.text)}</span>
-                </div>
-                <button class="task-delete" onclick="deleteTask(${t.id})">✕</button>
-            `;
-            list.appendChild(li);
-        });
+        list.innerHTML = '<li style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);text-align:center;padding:16px;">Belum ada tugas. Tambahkan tugas baru!</li>';
+        return;
     }
 
+    tasks.forEach(t => {
+        const isDone = parseInt(t.done) === 1; // ← fix utama
+        const createdTime = formatTime(t.created_at);
+        const completedTime = formatTime(t.completed_at);
+
+        const timeBadge = isDone && completedTime
+            ? `<span class="task-time">📅 ${createdTime} &nbsp;✓ ${completedTime}</span>`
+            : `<span class="task-time">📅 ${createdTime}</span>`;
+
+        const li = document.createElement('li');
+        li.className = 'task-item';
+        li.innerHTML = `
+            <div class="task-checkbox ${isDone ? 'checked' : ''}"
+                 onclick="toggleTask(${t.id}, ${isDone ? 1 : 0})"></div>
+            <div class="task-text-wrap">
+                <span class="task-text ${isDone ? 'done' : ''}">${escapeHtml(t.text)}</span>
+                ${timeBadge}
+            </div>
+            <button class="task-delete" onclick="deleteTask(${t.id})">✕</button>
+        `;
+        list.appendChild(li);
+    });
+}
+
+function updateTaskCount(tasks) {
     const countEl = document.getElementById('taskCount');
     const doneEl = document.getElementById('taskDone');
+    const totalEl = document.getElementById('totalTasks');
     if (countEl) countEl.textContent = `${tasks.length} tugas`;
-    if (doneEl) doneEl.textContent = `${tasks.filter(t => t.done).length} selesai`;
+    if (doneEl) doneEl.textContent = `${tasks.filter(t => t.done == 1).length} selesai`;
+    if (totalEl) totalEl.textContent = tasks.length;
 }
 
 // ========================
@@ -565,10 +621,6 @@ function closeArchive() {
     archiveModal.classList.remove("active");
 }
 
-/**
-    * State profil lokal.
-    * Ganti nilai awal ini dengan data dari server/database kamu.
-    */
 let profileData = {
     name: 'Nama Pengguna',
     username: '@username',
@@ -584,7 +636,6 @@ let profileData = {
 
 function fetchStatsFromDB() {
 
-    // Simulasi delay DB response
     setTimeout(() => {
         updateStats(128, 24, 'ADMIN');
     }, 1400);
@@ -614,7 +665,7 @@ function setStatEl(id, value) {
  * MODAL — BUKA & TUTUP
  * ------------------------------------------------------------------ */
 function openModal() {
-    // Isi form dengan data saat ini
+
     document.getElementById('inputName').value = profileData.name;
     document.getElementById('inputUsername').value = profileData.username;
     document.getElementById('inputEmail').value = profileData.email;
@@ -624,10 +675,8 @@ function openModal() {
     document.getElementById('inputPass').value = '';
     document.getElementById('inputPassConf').value = '';
 
-    // Sync stats ke modal
     syncModalStats();
 
-    // Sync avatar ke modal
     const ma = document.getElementById('modalAvatar');
     if (profileData.avatarSrc) {
         ma.innerHTML = `<img src="${profileData.avatarSrc}" alt="Foto profil">`;
@@ -678,13 +727,10 @@ function handleFileUpload(event) {
 
     if (!file) return;
 
-    // simpan file asli
     selectedAvatarFile = file;
 
-    // buat preview sementara
     const imageUrl = URL.createObjectURL(file);
 
-    // simpan ke state
     profileData.avatarSrc = imageUrl;
 
     const imgHTML =
@@ -836,7 +882,6 @@ function loadProfile() {
 
             const data = result.data;
 
-            // simpan ke state
             profileData.name = data.name;
             profileData.username = data.username;
             profileData.email = data.email;
@@ -911,6 +956,10 @@ function loadProfile() {
             if (profileUID) {
                 profileUID.textContent =
                     'USR_' + data.id;
+            }
+            const headerUserId = document.getElementById('headerUserId');
+            if (headerUserId) {
+                headerUserId.textContent = 'USR_' + data.id;
             }
             // avatar
             const avatarHTML = data.avatar
@@ -991,6 +1040,26 @@ function updateStreak() {
 
     document.getElementById('totalStreak')
         .textContent = streak;
+}
+//total hours
+function loadTotalHours() {
+    fetch('/nexus/backend/get_hours.php')
+    .then(res => res.json())
+    .then(data => {
+        if (!data.success) return;
+
+        const el = document.getElementById('totalHours');
+        if (!el) return;
+
+        if (data.hours === 0) {
+            el.textContent = data.minutes + 'm';
+        } else {
+            el.textContent = data.hours + 'j';
+        }
+
+        el.title = `Total: ${data.display}`;
+    })
+    .catch(err => console.error('Error load hours:', err));
 }
 loadProfile();
 loadStats();

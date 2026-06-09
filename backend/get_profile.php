@@ -1,28 +1,22 @@
 <?php
-
-header('Content-Type: application/json');
-
+ 
+include 'auth.php';
 include 'db.php';
-
-$id = 1;
-
-$sql = "SELECT * FROM users WHERE id=$id";
-
-$result = mysqli_query($conn, $sql);
-
+ 
+header('Content-Type: application/json');
+ 
+$stmt = mysqli_prepare($conn,
+    "SELECT id, name, username, email, avatar, created_at, last_login
+     FROM users
+     WHERE id = ?
+     LIMIT 1"
+);
+mysqli_stmt_bind_param($stmt, "i", $current_user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
+ 
 if ($result && mysqli_num_rows($result) > 0) {
-
-    $user = mysqli_fetch_assoc($result);
-
-    echo json_encode([
-        "success" => true,
-        "data" => $user
-    ]);
-
+    echo json_encode(["success" => true, "data" => mysqli_fetch_assoc($result)]);
 } else {
-
-    echo json_encode([
-        "success" => false
-    ]);
+    echo json_encode(["success" => false, "message" => "User tidak ditemukan"]);
 }
-?>

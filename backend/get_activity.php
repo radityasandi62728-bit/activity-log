@@ -1,5 +1,6 @@
 <?php
 
+session_start();
 include 'db.php';
 
 header('Access-Control-Allow-Origin: *');
@@ -13,8 +14,15 @@ if ($_SERVER["REQUEST_METHOD"] === "OPTIONS") {
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $activity = isset($_POST['activity']) ? mysqli_real_escape_string($conn, $_POST['activity']) : '';
 
+    $user_id = (int) ($_SESSION['user_id'] ?? 0);
+    if ($user_id <= 0) {
+        http_response_code(401);
+        echo json_encode(["success" => false, "message" => "Unauthorized"]);
+        exit;
+    }
+
     $sql = "INSERT INTO activity_logs (user_id, activity_text)
-            VALUES (1, '$activity')";
+            VALUES ($user_id, '$activity')";
 
     $result = mysqli_query($conn, $sql);
 
@@ -29,8 +37,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 if ($_SERVER["REQUEST_METHOD"] === "GET") {
     header('Content-Type: application/json; charset=utf-8');
 
+    $user_id = (int) ($_SESSION['user_id'] ?? 0);
+    if ($user_id <= 0) {
+        echo json_encode([]);
+        exit;
+    }
+
     $sql = "SELECT id, user_id, activity_text, created_at
             FROM activity_logs
+            WHERE user_id = $user_id
             ORDER BY created_at DESC";
     $result = mysqli_query($conn, $sql);
 

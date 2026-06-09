@@ -1,105 +1,60 @@
 <?php
-
+ 
 error_reporting(0);
 ini_set('display_errors', 0);
-
-header('Content-Type: application/json');
-
+ 
+include 'auth.php';
 include 'db.php';
-
-/* USER FIX */
-$id = 1;
-
-/* DATA */
-$name     = $_POST['name'];
-$username = $_POST['username'];
-$email    = $_POST['email'];
-
+ 
+header('Content-Type: application/json');
+ 
+$name     = trim($_POST['name']     ?? '');
+$username = trim($_POST['username'] ?? '');
+$email    = trim($_POST['email']    ?? '');
+ 
+if (!$name || !$email) {
+    echo json_encode(["success" => false, "message" => "Nama dan email wajib diisi"]);
+    exit;
+}
+ 
 /* =========================
    UPLOAD AVATAR
 ========================= */
-
-if (isset($_FILES['avatar'])) {
-
-    if ($_FILES['avatar']['error'] === 0) {
-
-        $fileName =
-            time() . '_' . basename($_FILES['avatar']['name']);
-
-        $targetPath =
-            "../uploads/" . $fileName;
-
-        $dbPath =
-            "/nexus/uploads/" . $fileName;
-
-        $move =
-            move_uploaded_file(
-                $_FILES['avatar']['tmp_name'],
-                $targetPath
-            );
-
-        if ($move) {
-
-            $avatarPath = $dbPath;
-
-        } else {
-
-            echo json_encode([
-                "success" => false,
-                "message" => "GAGAL MOVE FILE"
-            ]);
-
-            exit;
-        }
-
+ 
+$avatarPath = null;
+ 
+if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === 0) {
+ 
+    $fileName   = time() . '_' . basename($_FILES['avatar']['name']);
+    $targetPath = "../uploads/" . $fileName;
+    $dbPath     = "/nexus/uploads/" . $fileName;
+ 
+    if (move_uploaded_file($_FILES['avatar']['tmp_name'], $targetPath)) {
+        $avatarPath = $dbPath;
     } else {
-
-        echo json_encode([
-            "success" => false,
-            "message" => "UPLOAD ERROR CODE: " .
-                         $_FILES['avatar']['error']
-        ]);
-
+        echo json_encode(["success" => false, "message" => "GAGAL MOVE FILE"]);
         exit;
     }
-
-} else {
-
-    $avatarPath = null;
 }
-
+ 
 /* =========================
    UPDATE DATABASE
 ========================= */
-
-$sql = "UPDATE users SET
-    name='$name',
-    username='$username',
-    email='$email'";
-
-/* kalau avatar baru ada */
+ 
 if ($avatarPath) {
-
-    $sql .= ", avatar='$avatarPath'";
-}
-
-$sql .= " WHERE id=$id";
-
-/* =========================
-   EXECUTE
-========================= */
-
-if (mysqli_query($conn, $sql)) {
-
-    echo json_encode([
-        "success" => true
-    ]);
-
+    $stmt = mysqli_prepare($conn,
+        "UPDATE users SET name=?, username=?, email=?, avatar=? WHERE id=?"
+    );
+    mysqli_stmt_bind_param($stmt, "ssssi", $name, $username, $email, $avatarPath, $current_user_id);
 } else {
-
-    echo json_encode([
-        "success" => false,
-        "message" => mysqli_error($conn)
-    ]);
+    $stmt = mysqli_prepare($conn,
+        "UPDATE users SET name=?, username=?, email=? WHERE id=?"
+    );
+    mysqli_stmt_bind_param($stmt, "sssi", $name, $username, $email, $current_user_id);
 }
-?>
+ 
+if (mysqli_stmt_execute($stmt)) {
+    echo json_encode(["success" => true]);
+} else {
+    echo json_encode(["success" => false, "message" => mysqli_error($conn)]);
+}

@@ -1523,6 +1523,34 @@ main {
     color: var(--text-dim);
 }
 
+.developer-card {
+    min-height: 180px;
+}
+
+.developer-card-grid {
+    display: grid;
+    grid-template-columns: 1fr 96px;
+    align-items: start;
+    gap: 16px;
+    margin-top: -6px;
+}
+
+.developer-card-info {
+    min-width: 0;
+}
+
+.developer-photo {
+    width: 96px;
+    height: 96px;
+    display: block;
+    object-fit: cover;
+    margin-top: -30px;
+    border-radius: 12px;
+    border: 1px solid var(--panel-border);
+    box-shadow: 0 0 0 1px rgba(0, 220, 255, 0.12), 0 10px 20px rgba(0, 0, 0, 0.25);
+    flex-shrink: 0;
+}
+
 .about-version {
     font-family: var(--font-mono);
     font-size: 11px;

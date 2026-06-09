@@ -69,13 +69,11 @@ function updateStats() {
     const logs = getLogs();
     const tasks = getTasks();
 
-    // Total unique days
     const uniqueDays = new Set(logs.map(l => l.date)).size;
     document.getElementById('totalDays').textContent = uniqueDays;
     const profileLog = document.getElementById('profileTotalLog');
     if (profileLog) profileLog.textContent = logs.length;
 
-    // Streak
     let streak = 0;
     const today = new Date();
     for (let i = 0; i < 365; i++) {
@@ -87,9 +85,8 @@ function updateStats() {
         else if (i > 0) break;
     }
     document.getElementById('totalStreak').textContent = streak;
-    document.getElementById('totalTasks').textContent = tasks.filter(t => t.done).length;
+    // ← baris totalTasks dihapus dari sini
 
-    // Achievements
     updateAchievements(uniqueDays, streak, tasks);
 }
 
@@ -262,7 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     updateStreak();
     updateStats();
     loadTasks();
-    loadTotalHours();
+    loadTaskStats();
     addLog('session_start');
     loadHistory();
 
@@ -389,7 +386,7 @@ function toggleTask(id, currentDone) {
         .then(data => {
             if (data.success) {
                 loadTasks();
-                loadTotalHours();
+                loadTaskStats();
             }
         });
 }
@@ -402,7 +399,7 @@ function deleteTask(id) {
     })
         .then(res => res.json())
         .then(data => {
-            if (data.success) loadTasks();
+            if (data.success) loadTasks(), loadTaskStats(); ;
         });
 }
 
@@ -765,12 +762,10 @@ function saveProfile() {
         return;
     }
 
-    // Loading state
     const btn = document.getElementById('btnSave');
     btn.textContent = 'MENYIMPAN···';
     btn.disabled = true;
 
-    // Simulasi delay response server
     const formData = new FormData();
 
     formData.append("name", name);
@@ -1042,24 +1037,26 @@ function updateStreak() {
         .textContent = streak;
 }
 //total hours
-function loadTotalHours() {
-    fetch('/nexus/backend/get_hours.php')
+function loadTaskStats() {
+    fetch('/nexus/backend/get_task_stat.php')
     .then(res => res.json())
     .then(data => {
         if (!data.success) return;
 
-        const el = document.getElementById('totalHours');
-        if (!el) return;
-
-        if (data.hours === 0) {
-            el.textContent = data.minutes + 'm';
-        } else {
-            el.textContent = data.hours + 'j';
+        // Total jam
+        const hoursEl = document.getElementById('totalHours');
+        if (hoursEl) {
+            hoursEl.textContent = data.total_minutes < 60
+                ? data.minutes + 'm'
+                : data.hours + 'j';
+            hoursEl.title = `Total: ${data.display}`;
         }
 
-        el.title = `Total: ${data.display}`;
+        // Total tugas
+        const tasksEl = document.getElementById('totalTasks');
+        if (tasksEl) tasksEl.textContent = data.total_tasks;
     })
-    .catch(err => console.error('Error load hours:', err));
+    .catch(err => console.error('Error load task stats:', err));
 }
 loadProfile();
 loadStats();

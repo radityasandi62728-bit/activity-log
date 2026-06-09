@@ -1,27 +1,21 @@
 <?php
-
-header('Content-Type: application/json');
-
+ 
+include 'auth.php';
 include 'db.php';
-
-$userId = 1;
-
-/* =========================
-   TOTAL LOG
-========================= */
-
-$sql =
-    "SELECT COUNT(*) as total
+ 
+header('Content-Type: application/json');
+ 
+$stmt = mysqli_prepare($conn,
+    "SELECT COUNT(*) AS total
      FROM activity_logs
-     WHERE user_id = $userId";
-
-$result = mysqli_query($conn, $sql);
-
+     WHERE user_id = ?"
+);
+mysqli_stmt_bind_param($stmt, "i", $current_user_id);
+mysqli_stmt_execute($stmt);
+$result = mysqli_stmt_get_result($stmt);
 $row = mysqli_fetch_assoc($result);
-
-$totalLogs = $row['total'] ?? 0;
-
+ 
 echo json_encode([
-    "success" => true,
-    "totalLogs" => $totalLogs
+    "success"   => true,
+    "totalLogs" => (int) ($row['total'] ?? 0)
 ]);

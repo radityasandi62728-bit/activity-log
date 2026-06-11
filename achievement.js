@@ -104,7 +104,7 @@ function buildArchiveHTML(body, list) {
             <div class="ach-arc-img">
                 ${ach.unlocked && imageSrc
                     ? `<img src="${imageSrc}" alt="${ach.name}" onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\"ach-arc-lock\">🏆</div>'">`
-                    : `<div class="ach-arc-lock">${ach.unlocked ? '🏆' : '🔒'}</div>`
+                    : `<div class="ach-arc-lock">${ach.unlocked ? '🔒' : '🔒'}</div>`
                 }
             </div>
             <div class="ach-arc-name">${ach.unlocked ? ach.name : '???'}</div>

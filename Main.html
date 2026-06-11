@@ -5,12 +5,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NEXUS-Tracker Activity</title>
+    <title>Tracker Activity</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link
         href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&family=Exo+2:wght@300;400;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="pages/main/style.css">
+    <link rel="stylesheet" href="achievement.css">
 </head>
 
 <body>
@@ -185,7 +186,7 @@
 
                                 <div class="stat-box">
                                     <span class="stat-label">DATA</span>
-                                    <span class="stat-value">24</span>
+                                    <span class="stat-value">-</span>
                                 </div>
 
                                 <div class="stat-box">
@@ -243,7 +244,7 @@
                                     EDIT PROFILE
                                 </button>
 
-                                <button class="profile-btn logout-btn">
+                                <button class="profile-btn logout-btn" onclick="handleLogout()">
                                     LOGOUT
                                 </button>
 
@@ -388,7 +389,6 @@
 
                 </div>
             </div>
-
             <!-- ABOUT SECTION -->
             <section id="about" class="section about-section">
                 <div class="section-inner">
@@ -540,6 +540,7 @@
     </div>
 
     <script src="pages/main/hello.js"></script>
+    <script src="achievement.js"></script>
 </body>
 
 </html>

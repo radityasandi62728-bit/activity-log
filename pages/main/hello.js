@@ -65,6 +65,23 @@ function addLog(text = 'activity') {
 // ========================
 // STATS
 // ========================
+function calculateStreak(logs) {
+    let streak = 0;
+    const today = new Date();
+
+    for (let i = 0; i < 365; i++) {
+        const d = new Date(today);
+        d.setDate(today.getDate() - i);
+        const ds = d.toISOString().slice(0, 10);
+        const hasLog = logs.some(l => l.date === ds);
+
+        if (hasLog) streak++;
+        else if (i > 0) break;
+    }
+
+    return streak;
+}
+
 function updateStats() {
     const logs = getLogs();
     const tasks = getTasks();
@@ -74,18 +91,8 @@ function updateStats() {
     const profileLog = document.getElementById('profileTotalLog');
     if (profileLog) profileLog.textContent = logs.length;
 
-    let streak = 0;
-    const today = new Date();
-    for (let i = 0; i < 365; i++) {
-        const d = new Date(today);
-        d.setDate(today.getDate() - i);
-        const ds = d.toISOString().slice(0, 10);
-        const hasLog = logs.some(l => l.date === ds);
-        if (hasLog) streak++;
-        else if (i > 0) break;
-    }
+    const streak = calculateStreak(logs);
     document.getElementById('totalStreak').textContent = streak;
-    // ← baris totalTasks dihapus dari sini
 
     updateAchievements(uniqueDays, streak, tasks);
 }
@@ -93,17 +100,20 @@ function updateStats() {
 function updateAchievements(days, streak, tasks) {
     const items = document.querySelectorAll('.ach-item');
     if (!items.length) return;
+
     const defs = [
         { label: 'First Log', check: () => days >= 1 },
         { label: '7-Day Streak', check: () => streak >= 7 },
-        { label: 'Task Master', check: () => tasks.filter(t => t.done).length >= 5 },
+        { label: 'Task Master', check: () => tasks.filter(t => parseInt(t.done) === 1).length >= 5 },
     ];
+
     items.forEach((el, i) => {
-        if (defs[i] && defs[i].check()) {
-            el.classList.remove('locked');
-            el.classList.add('unlocked');
-            el.querySelector('span').textContent = '⬢';
-        }
+        const unlocked = defs[i] ? defs[i].check() : false;
+        el.classList.toggle('unlocked', unlocked);
+        el.classList.toggle('locked', !unlocked);
+
+        const icon = el.querySelector('span');
+        if (icon) icon.textContent = unlocked ? '⬢' : '⬡';
     });
 }
 
@@ -262,6 +272,7 @@ document.addEventListener('DOMContentLoaded', () => {
     loadTaskStats();
     addLog('session_start');
     loadHistory();
+    loadAchievements();
 
 
     // Close modals
@@ -387,6 +398,7 @@ function toggleTask(id, currentDone) {
             if (data.success) {
                 loadTasks();
                 loadTaskStats();
+                updateStats();
             }
         });
 }
@@ -399,7 +411,11 @@ function deleteTask(id) {
     })
         .then(res => res.json())
         .then(data => {
-            if (data.success) loadTasks(), loadTaskStats(); ;
+            if (data.success) {
+                loadTasks();
+                loadTaskStats();
+                updateStats();
+            }
         });
 }
 
@@ -411,8 +427,12 @@ function loadTasks() {
         })
         .then(data => {
             if (!data.success) return;
-            renderTasksFromDB(data.data || []);
-            updateTaskCount(data.data || []);
+
+            const tasks = data.data || [];
+            saveTasks(tasks);
+            renderTasksFromDB(tasks);
+            updateTaskCount(tasks);
+            updateStats();
         })
         .catch(error => {
             console.error('Error memuat tugas:', error);
@@ -430,7 +450,7 @@ function renderTasksFromDB(tasks) {
     }
 
     tasks.forEach(t => {
-        const isDone = parseInt(t.done) === 1; // ← fix utama
+        const isDone = parseInt(t.done) === 1; 
         const createdTime = formatTime(t.created_at);
         const completedTime = formatTime(t.completed_at);
 
@@ -466,7 +486,7 @@ function updateTaskCount(tasks) {
 // CELIA CHATBOT
 // ========================
 const CELIA_RESPONSES = [
-    ["halo|hai|hello", "Halo! Aku CELIA, siap membantumu hari ini! 🚀"],
+    ["halo|hai|hello", "Ya? Ada yang bisa aku bantu? 😊"],
     ["semangat|motivasi|down|lelah", "Ingat — setiap langkah kecil yang kamu ambil hari ini adalah investasi untuk versi dirimu di masa depan. KEEP GOING! 💪"],
     ["tugas|task|todo", "Kamu bisa buka Task Manager dengan tombol TASK di pojok kanan bawah untuk mengelola tugasmu!"],
     ["streak|aktif|produktif", "Konsistensi adalah kunci! Setiap kali kamu log aktivitas, kamu membangun kebiasaan yang kuat."],
@@ -559,17 +579,10 @@ function openArchive(type) {
 
     if (type === "achievement") {
 
-        archiveTitle.innerText = "ACHIEVEMENT";
-
-        archiveBody.innerHTML = `
-            <div class="badge-card">
-                🏆 Badge 777 Unlocked
-            </div>
-
-            <div class="badge-card locked">
-                🔒 Night Hunter
-            </div>
-        `;
+        archiveModal.classList.add("active");
+        archiveTitle.innerText = "ACHIEVEMENTS";
+        archiveBody.innerHTML = '<div class="ach-grid" id="achGrid"></div>';
+        renderAchArchive(); 
     }
 
     else if (type === "stats") {
@@ -1039,24 +1052,35 @@ function updateStreak() {
 //total hours
 function loadTaskStats() {
     fetch('/nexus/backend/get_task_stat.php')
-    .then(res => res.json())
-    .then(data => {
-        if (!data.success) return;
+        .then(res => res.json())
+        .then(data => {
+            if (!data.success) return;
 
-        // Total jam
-        const hoursEl = document.getElementById('totalHours');
-        if (hoursEl) {
-            hoursEl.textContent = data.total_minutes < 60
-                ? data.minutes + 'm'
-                : data.hours + 'j';
-            hoursEl.title = `Total: ${data.display}`;
-        }
+            const hoursEl = document.getElementById('totalHours');
+            if (hoursEl) {
+                hoursEl.textContent = data.total_minutes < 60
+                    ? data.minutes + 'm'
+                    : data.hours + 'j';
+                hoursEl.title = `Total: ${data.display}`;
+            }
 
-        // Total tugas
-        const tasksEl = document.getElementById('totalTasks');
-        if (tasksEl) tasksEl.textContent = data.total_tasks;
-    })
-    .catch(err => console.error('Error load task stats:', err));
+            const tasksEl = document.getElementById('totalTasks');
+            if (tasksEl) tasksEl.textContent = data.total_tasks;
+        })
+        .catch(err => console.error('Error load task stats:', err));
+}
+function handleLogout() {
+    fetch('/nexus/backend/logout.php')
+        .then(res => res.json())
+        .then(data => {
+            if (data.success) {
+                window.location.href = '/nexus/login.html';
+            }
+        })
+        .catch(() => {
+
+            window.location.href = '/nexus/login.html';
+        });
 }
 loadProfile();
 loadStats();

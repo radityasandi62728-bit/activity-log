@@ -502,6 +502,8 @@ main {
     border-radius: 8px;
     padding: 14px;
     flex: 1;
+    max-height: 250px;
+    overflow-y: auto;
 }
 
 .ach-title {
@@ -1356,7 +1358,140 @@ main {
     color: var(--text-dim);
     font-family: var(--font-mono);
 }
-
+.ach-modal-bg {
+  min-height: 420px;
+  background: rgba(0,0,0,0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--border-radius-lg);
+  padding: 1rem;
+}
+.ach-modal {
+  width: 100%;
+  max-width: 640px;
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: 18px;
+  overflow: hidden;
+}
+.ach-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px;
+  border-bottom: 0.5px solid var(--color-border-tertiary);
+  background: var(--color-background-secondary);
+}
+.ach-modal-header span {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 2px;
+  color: var(--color-text-primary);
+}
+.ach-modal-header button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: 18px;
+  padding: 0;
+  line-height: 1;
+}
+.ach-modal-body {
+  padding: 20px 22px;
+}
+.ach-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: 12px;
+}
+.ach-box {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 16px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  cursor: default;
+}
+.ach-box.unlocked {
+  border-color: var(--color-border-secondary);
+  background: var(--color-background-primary);
+}
+.ach-box.unlocked::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #06b6d4, #22c55e);
+}
+.ach-box.locked {
+  opacity: 0.5;
+}
+.ach-img-frame {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 0.5px solid var(--color-border-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-background-secondary);
+  position: relative;
+}
+.ach-box.unlocked .ach-img-frame {
+  border-color: #06b6d4;
+}
+.ach-img-frame img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.ach-img-frame .lock-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+.ach-box-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--color-text-primary);
+  line-height: 1.3;
+}
+.ach-box.locked .ach-box-name {
+  color: var(--color-text-tertiary);
+}
+.ach-box-desc {
+  font-size: 10px;
+  color: var(--color-text-secondary);
+  line-height: 1.4;
+}
+.ach-box-date {
+  font-size: 10px;
+  color: #22c55e;
+}
+.ach-unlock-badge {
+  position: absolute;
+  top: 8px; right: 8px;
+  width: 16px; height: 16px;
+  background: #22c55e;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 /* ===== CELIA SECTION ===== */
 
 .celia-avatar-lg {
